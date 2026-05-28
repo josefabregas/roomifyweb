@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Roomify — MLS-ready real estate photos in 3 minutes</title>
+<meta name="description" content="Turn iPhone snapshots into magazine-quality real estate listing photos. AI-enhanced, MLS-ready, no editing software, $49 per listing." />
+<link rel="icon" href="/favicon.png" />
+<link rel="apple-touch-icon" href="/favicon.png" />
+
+<meta property="og:title" content="Roomify — MLS-ready real estate photos in 3 minutes" />
+<meta property="og:description" content="iPhone snapshots → magazine-quality listing photos. $49 per listing, no photographer needed." />
+<meta property="og:image" content="/og.jpg" />
+<meta property="og:url" content="https://roomifyapp.ai" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-card: #141414;
+    --text: #f5f5f5;
+    --text-muted: #9a9a9a;
+    --text-subtle: #5a5a5a;
+    --accent: #5ce0a6;
+    --border: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Header */
+  header {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .brand-mark {
+    color: var(--accent);
+    margin-right: 4px;
+  }
+  .nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    margin-left: 24px;
+  }
+  .nav a:hover { color: var(--text); }
+
+  /* Hero */
+  .hero {
+    padding: 96px 0 64px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 72px);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    max-width: 880px;
+    margin: 0 auto 24px;
+  }
+  .hero h1 .accent { color: var(--accent); }
+  .hero p {
+    font-size: clamp(17px, 2vw, 20px);
+    color: var(--text-muted);
+    max-width: 620px;
+    margin: 0 auto 40px;
+  }
+
+  /* App Store badge */
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+  .app-store-badge {
+    display: inline-block;
+    transition: opacity 0.15s ease;
+  }
+  .app-store-badge:hover { opacity: 0.85; }
+  .app-store-badge img {
+    height: 56px;
+    width: auto;
+    display: block;
+  }
+  .badge-caveat {
+    color: var(--text-subtle);
+    font-size: 13px;
+    text-align: center;
+  }
+
+  /* Phone mockup placeholder */
+  .phone {
+    margin: 64px auto 0;
+    max-width: 280px;
+    aspect-ratio: 9 / 19.5;
+    background: linear-gradient(180deg, #1a1a1a 0%, #0e0e0e 100%);
+    border: 1px solid var(--border);
+    border-radius: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-subtle);
+    font-size: 13px;
+  }
+
+  /* Features */
+  .features {
+    padding: 96px 0;
+    border-top: 1px solid var(--border);
+  }
+  .features h2 {
+    font-size: clamp(28px, 4vw, 42px);
+    letter-spacing: -0.02em;
+    text-align: center;
+    margin-bottom: 56px;
+  }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .feature {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(92, 224, 166, 0.12);
+    border: 1px solid rgba(92, 224, 166, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    font-size: 20px;
+  }
+  .feature h3 {
+    font-size: 17px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .feature p {
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+
+  /* Pricing */
+  .pricing {
+    padding: 96px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .pricing h2 {
+    font-size: clamp(28px, 4vw, 42px);
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .pricing .sub {
+    color: var(--text-muted);
+    max-width: 520px;
+    margin: 0 auto 56px;
+  }
+  .price-card {
+    max-width: 460px;
+    margin: 0 auto;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 32px;
+  }
+  .price-amount {
+    font-size: 56px;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .price-amount .unit {
+    font-size: 22px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  .price-tagline {
+    color: var(--text-muted);
+    margin-bottom: 28px;
+  }
+  .price-features {
+    text-align: left;
+    list-style: none;
+    padding: 0;
+    margin: 28px 0 0;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+  .price-features li {
+    padding: 6px 0;
+    color: var(--text);
+    font-size: 15px;
+  }
+  .price-features li::before {
+    content: "✓";
+    color: var(--accent);
+    margin-right: 10px;
+    font-weight: 700;
+  }
+
+  /* Footer */
+  footer {
+    padding: 56px 0 40px;
+    border-top: 1px solid var(--border);
+    color: var(--text-subtle);
+    font-size: 13px;
+  }
+  .footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  footer a {
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-left: 18px;
+  }
+  footer a:hover { color: var(--text); }
+  footer a:first-of-type { margin-left: 0; }
+
+  @media (max-width: 640px) {
+    .hero { padding: 64px 0 32px; }
+    .features, .pricing { padding: 64px 0; }
+    .footer-row { flex-direction: column; align-items: flex-start; }
+    footer a { margin-left: 0; margin-right: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="brand"><span class="brand-mark">✦</span>Roomify</div>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>
+      MLS-ready photos in <span class="accent">three minutes</span>.
+    </h1>
+    <p>
+      Turn your iPhone snapshots into magazine-quality real estate listing photos. AI-enhanced, professional-grade, no editing software.
+    </p>
+
+    <div class="badge-row">
+      <!--
+        Replace `#` with your real App Store URL once Apple approves
+        the app. The badge image is Apple's official asset, served
+        from their tools.applemediaservices CDN — safe to hotlink
+        per Apple's marketing guidelines.
+      -->
+      <a class="app-store-badge" href="#" aria-label="Download Roomify on the App Store">
+        <img
+          src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us"
+          alt="Download on the App Store"
+          width="180"
+        />
+      </a>
+    </div>
+    <div class="badge-caveat">iPhone only. Requires iOS 16 or later.</div>
+  </div>
+</section>
+
+<section id="features" class="features">
+  <div class="container">
+    <h2>What you get</h2>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="feature-icon">📷</div>
+        <h3>Skip the photographer</h3>
+        <p>Real estate shoots run $300-500. Roomify is $49 per listing. Same end result, same day.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">✦</div>
+        <h3>MLS-ready output</h3>
+        <p>Magazine-quality enhancement. Lens distortion corrected, windows balanced, finishes polished — no editing software needed.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⏱</div>
+        <h3>About 3 minutes per listing</h3>
+        <p>Snap with your iPhone, tap Roomify, walk away. Photos are done before you finish locking up.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🏠</div>
+        <h3>Preserves your home</h3>
+        <p>Never invents furniture, never moves walls. We polish what's there, we don't fake what isn't.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🌇</div>
+        <h3>Twilight exterior shots</h3>
+        <p>Outdoor shots get a magazine-quality "golden hour cusp" treatment when appropriate — the same look pro photographers spend hours staging.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📍</div>
+        <h3>Disclosure-friendly</h3>
+        <p>Every enhanced photo carries a "Digitally Altered" metadata tag, suitable for any MLS that requires disclosure.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="pricing">
+  <div class="container">
+    <h2>Simple, per-listing pricing</h2>
+    <p class="sub">Pay only when you have a listing to enhance. No subscription, no monthly fees.</p>
+    <div class="price-card">
+      <div class="price-amount">$49<span class="unit"> / listing</span></div>
+      <div class="price-tagline">Includes 25 AI-enhanced photos</div>
+      <ul class="price-features">
+        <li>Magazine-quality output, MLS-ready</li>
+        <li>About 3 minutes per listing</li>
+        <li>Camera roll integration — pull existing photos or shoot new</li>
+        <li>Re-roll any photo up to 5 times if you want a different take</li>
+        <li>Extra photos beyond 25 are $2 each</li>
+        <li>One-time payment per listing — no subscription</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-row">
+    <div>© 2026 Roomify. All rights reserved.</div>
+    <div>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="mailto:support@roomifyapp.ai">Contact</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
