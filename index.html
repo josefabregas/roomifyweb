@@ -805,6 +805,11 @@
     .platforms { padding-top: 40px; padding-bottom: 8px; }
     .faq { padding-top: 64px; padding-bottom: 40px; }
     .faq-summary { font-size: 16px; padding: 18px 0; }
+    /* Bottom clearance for the sticky Download CTA pill — without
+       it, the pill overlaps the footer copyright + Privacy/Terms
+       links at the end of the page. ~84px = pill height (52) +
+       its bottom offset (~32) with comfortable margin. */
+    footer { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 100px); }
 
     /* Immersive steps — switch to single-column on mobile, phone on
        top, text below. Height comes from the snap anchors now, so
