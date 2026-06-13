@@ -214,6 +214,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Defensive: prevents any oversized inner img from overflowing into
+       its neighbor's half (the actual bug Jose hit). */
+    overflow: hidden;
   }
   .lightbox-pair img {
     max-width: 100%;
@@ -293,7 +296,11 @@
     flex-direction: column;
   }
   .lightbox.open { display: flex; }
-  .lightbox img {
+  /* Scoped to the single-image #lightbox-img only — without this scoping
+     the rule also applied to the imgs inside .lightbox-pair, forcing them
+     to render at up to 96vw / 86vh which then overflowed their flex side
+     and visually occluded the other image. */
+  .lightbox > img {
     max-width: 96vw;
     max-height: 86vh;
     object-fit: contain;
