@@ -303,10 +303,17 @@ html, body {
   object-fit: contain;
   display: block;
 }
+/* Chrome elements (close / prev / next / counter) sit above the pair
+   viewer. Without explicit z-index the pair element — which is a
+   later sibling — paints on top of these buttons and steals their
+   clicks. On desktop the pair has 64px horizontal padding so the
+   issue was masked; on mobile the padding drops to 12px and the X
+   becomes unclickable. Fixed by hoisting these above the content. */
 .lightbox-close {
   position: absolute;
   top: 16px;
   right: 16px;
+  z-index: 10;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -322,6 +329,7 @@ html, body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  z-index: 10;
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -340,6 +348,7 @@ html, body {
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 10;
   color: var(--text-subtle);
   font-size: 13px;
   letter-spacing: 0.04em;
