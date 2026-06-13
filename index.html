@@ -1198,6 +1198,20 @@
   /* When the showcase section has more than one listing (which is the
      accumulating-listings case), give the cards breathing room. */
   .showcase-card + .showcase-card { margin-top: 28px; }
+  /* Older listings live inside this collapsible wrapper so the main
+     listing isn't crowded as more accumulate. Mirrors .more-extras
+     (used by the home-page before/after section) — same max-height
+     reveal so the motion feels consistent across the page. */
+  .more-listings {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .more-listings[data-open="true"] {
+    /* Headroom for ~6 stacked listing cards; CSS animates from 0 */
+    max-height: 5000px;
+  }
+  .more-listings .showcase-card { margin-top: 28px; }
   .showcase-card {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
@@ -1698,29 +1712,14 @@
 </section>
 
 <section class="showcase container reveal" id="demo-listing">
-  <div class="showcase-card">
-    <div class="showcase-media">
-      <img class="showcase-hero" src="/assets/residences-22/after-18.webp" alt="Residences #22 — covered patio overlooking the golf course at sunset, shot on iPhone and Roomified" />
-      <span class="showcase-badge">Latest listing · before &amp; after</span>
-      <span class="showcase-address">Residences #22</span>
-    </div>
-    <div class="showcase-text">
-      <h2>Every shot.<br />Before and after.</h2>
-      <p>The newest listing on the site — tap any photo to see the raw iPhone original next to the Roomified version. Side-by-side on every single one, no cherry-picking.</p>
-      <div class="showcase-stats">
-        <div><strong>18</strong>Photos</div>
-        <div><strong>1 iPhone</strong>Hardware</div>
-        <div><strong>$49</strong>Total</div>
-      </div>
-      <a class="showcase-cta" href="/residences-22.html">See the full listing →</a>
-    </div>
-  </div>
-
+  <!-- Main featured listing — always visible. 4232 St Andrews is the
+       lead story because its iPhone-to-magazine arc reads strongest
+       at a glance, even without a paired before/after viewer. -->
   <div class="showcase-card">
     <div class="showcase-media">
       <img class="showcase-hero" src="/assets/4232-st-andrews/IMG_0754.webp" alt="4232 St Andrews — Mediterranean front exterior, shot on iPhone and Roomified" />
       <span class="showcase-badge">Real listing</span>
-      <span class="showcase-address">4232 St Andrews Blvd · Las Colinas, TX</span>
+      <span class="showcase-address">4232 St Andrews Blvd</span>
     </div>
     <div class="showcase-text">
       <h2>One iPhone.<br />One $49 charge.<br />A whole home.</h2>
@@ -1731,6 +1730,42 @@
         <div><strong>$49</strong>Total</div>
       </div>
       <a class="showcase-cta" href="/4232-st-andrews.html">See the full listing →</a>
+    </div>
+  </div>
+
+  <!-- Toggle to reveal additional listings. As more accumulate, they
+       go inside #more-listings — keeps the page focused on the lead
+       story while still letting visitors browse the rest. -->
+  <div class="more-toggle-row">
+    <button
+      class="more-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="more-listings"
+      onclick="toggleMoreListings(this)"
+    >
+      See other listings
+      <span class="chevron" aria-hidden="true">↓</span>
+    </button>
+  </div>
+
+  <div class="more-listings" id="more-listings" data-open="false">
+    <div class="showcase-card">
+      <div class="showcase-media">
+        <img class="showcase-hero" src="/assets/residences-22/after-18.webp" alt="Residences #22 — covered patio overlooking the golf course at sunset, shot on iPhone and Roomified" />
+        <span class="showcase-badge">Before &amp; after</span>
+        <span class="showcase-address">Residences #22</span>
+      </div>
+      <div class="showcase-text">
+        <h2>Every shot.<br />Before and after.</h2>
+        <p>Tap any photo to see the raw iPhone original next to the Roomified version. Side-by-side on every single one, no cherry-picking.</p>
+        <div class="showcase-stats">
+          <div><strong>18</strong>Photos</div>
+          <div><strong>1 iPhone</strong>Hardware</div>
+          <div><strong>$49</strong>Total</div>
+        </div>
+        <a class="showcase-cta" href="/residences-22.html">See the full listing →</a>
+      </div>
     </div>
   </div>
 </section>
@@ -1962,6 +1997,19 @@
     btn.querySelector('.chevron').textContent = next ? '↑' : '↓';
     btn.firstChild.nodeValue = next ? 'Hide before & after ' : 'See more before & after ';
     const target = document.getElementById('more-extras');
+    target.setAttribute('data-open', next.toString());
+  }
+
+  // ---- Expandable "more listings" toggle (sibling pattern) -------
+  // Keeps the showcase focused on the lead listing; older ones live
+  // behind this toggle so the page doesn't get long as listings stack.
+  function toggleMoreListings(btn) {
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    const next = !expanded;
+    btn.setAttribute('aria-expanded', next.toString());
+    btn.querySelector('.chevron').textContent = next ? '↑' : '↓';
+    btn.firstChild.nodeValue = next ? 'Hide other listings ' : 'See other listings ';
+    const target = document.getElementById('more-listings');
     target.setAttribute('data-open', next.toString());
   }
 
