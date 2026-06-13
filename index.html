@@ -1248,13 +1248,22 @@
     right: 0;
     background: linear-gradient(270deg, rgba(0,0,0,0.85) 0%, transparent 100%);
   }
+  /* Track must NOT have padding — the 0% → -50% loop relies on the
+     start of the duplicated half being visually identical to the start
+     of the first half. Any padding on the track makes the midpoint
+     land in the middle of empty space, which causes the visible cut.
+     Margin between the strip edges and the thumbnails lives on
+     .showcase-carousel instead (via the gradient fade pseudo-elements). */
   .carousel-track {
     display: flex;
-    gap: 6px;
-    padding: 8px;
+    gap: 8px;
     width: max-content;
     height: 100%;
-    animation: scroll-carousel 42s linear infinite;
+    padding: 8px 0;
+    /* Speed: ~75 px/sec — fast enough to feel alive, slow enough that
+       you can read each thumbnail mid-scroll. */
+    animation: scroll-carousel 22s linear infinite;
+    will-change: transform;
   }
   .carousel-track img {
     height: 100%;
@@ -1263,7 +1272,11 @@
     border-radius: 6px;
     object-fit: cover;
     box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    /* First img needs the same left-spacing as the gap so the loop
+       seam (which has a gap there too) lines up perfectly. */
+    flex-shrink: 0;
   }
+  .carousel-track img:first-child { margin-left: 8px; }
   .showcase-carousel:hover .carousel-track {
     animation-play-state: paused;
   }
