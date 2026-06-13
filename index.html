@@ -176,6 +176,26 @@
   .nav-cta:hover { opacity: 0.85; }
   .nav-cta:active { transform: scale(0.97); }
 
+  /* In-page anchor links between brand and the Download CTA. Smooth
+     scrolling is handled by `scroll-behavior: smooth` on <html>. */
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .nav-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: color 0.15s ease;
+  }
+  .nav-link:hover { color: var(--text); }
+  /* Account for the nav height so scroll lands just below it — without
+     this the section's title hides under the (transparent) nav bar. */
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+
   /* ---- Hero ----------------------------------------------------- */
   .hero {
     /* Longhand vertical padding only — using `padding:` shorthand
@@ -776,6 +796,9 @@
     .footer-row { flex-direction: column; align-items: flex-start; }
     footer a { margin-left: 0; margin-right: 14px; }
     .nav-cta { padding: 8px 16px; font-size: 12px; }
+    /* Hide in-page anchor links on mobile — the nav pill is too narrow
+       to fit them alongside the brand + Download CTA. */
+    .nav-links { display: none; }
     .brand { font-size: 13px; letter-spacing: 0.08em; }
     .brand img { width: 22px; height: 22px; }
     .nav-glow { width: 500px; height: 240px; top: -120px; }
@@ -1470,6 +1493,12 @@
       <img src="/assets/logo-white.png" alt="" />
       ROOMIFY
     </a>
+    <div class="nav-links">
+      <a class="nav-link" href="#demo-listing">Demo listing</a>
+      <a class="nav-link" href="#how-it-works">How it works</a>
+      <a class="nav-link" href="#pricing">Pricing</a>
+      <a class="nav-link" href="#faq">FAQ</a>
+    </div>
     <a class="nav-cta" href="#download">Download</a>
   </nav>
 </div>
@@ -1557,7 +1586,7 @@
   </div>
 </section>
 
-<section class="steps container reveal">
+<section class="steps container reveal" id="how-it-works">
   <h2>Three taps. That's it.</h2>
   <p class="lead">No editing skills. No tripod. No staging crew. Just your iPhone.</p>
 
@@ -1616,7 +1645,7 @@
   </div>
 </section>
 
-<section class="showcase container reveal">
+<section class="showcase container reveal" id="demo-listing">
   <div class="showcase-card">
     <div class="showcase-media">
       <img src="/assets/4232-st-andrews/IMG_0754.webp" alt="4232 St Andrews — Mediterranean front exterior, shot on iPhone and Roomified" />
@@ -1635,7 +1664,7 @@
   </div>
 </section>
 
-<section class="compare container reveal">
+<section class="compare container reveal" id="pricing">
   <h2>One price per listing.</h2>
   <p class="lead">No subscription. No monthly fee. Pay only when you have a listing to roomify.</p>
 
@@ -1688,7 +1717,7 @@
   </div>
 </section>
 
-<section class="faq container reveal">
+<section class="faq container reveal" id="faq">
   <h2>Common questions.</h2>
   <p class="lead">The short version: it works on any iPhone, anyone can use it, and your house stays your house.</p>
 
