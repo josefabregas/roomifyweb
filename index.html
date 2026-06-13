@@ -37,14 +37,86 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body {
+  html {
     background: var(--bg);
+  }
+  html, body {
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     line-height: 1.45;
     overflow-x: hidden;
     scroll-behavior: smooth;
+  }
+  /* Body bg lifted off so .bg-ambient (negative z-index) is visible. */
+  body { background: transparent; }
+
+  /* ---- Ambient background ---------------------------------------
+     Drifting brand-color orbs + fine dot grid sitting behind every
+     section. Pure CSS, GPU-composited, zero pointer cost. Negative
+     z-index puts it behind body content but still above the html
+     base color. Respects prefers-reduced-motion. */
+  .bg-ambient {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+  }
+  .bg-ambient .grid-dots {
+    position: absolute;
+    inset: 0;
+    /* Tiny dots at 36px pitch — reads as subtle texture, not pattern */
+    background-image: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.045) 1px,
+      transparent 1.4px
+    );
+    background-size: 36px 36px;
+    /* Mask the edges so the grid fades out at the page boundaries
+       instead of looking like wallpaper. */
+    mask-image: radial-gradient(ellipse at center, #000 35%, transparent 90%);
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 35%, transparent 90%);
+  }
+  .bg-ambient .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(110px);
+    will-change: transform;
+    animation: orbDrift 28s ease-in-out infinite;
+  }
+  .bg-ambient .orb-1 {
+    width: 720px;
+    height: 720px;
+    top: -180px;
+    left: -240px;
+    background: rgba(92, 224, 166, 0.26);
+  }
+  .bg-ambient .orb-2 {
+    width: 620px;
+    height: 620px;
+    top: 35%;
+    right: -220px;
+    background: rgba(92, 224, 166, 0.16);
+    animation-delay: -10s;
+    animation-duration: 34s;
+  }
+  .bg-ambient .orb-3 {
+    width: 780px;
+    height: 780px;
+    top: 62%;
+    left: 22%;
+    background: rgba(54, 168, 220, 0.13);
+    animation-delay: -18s;
+    animation-duration: 40s;
+  }
+  @keyframes orbDrift {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    33%      { transform: translate3d(50px, -40px, 0); }
+    66%      { transform: translate3d(-40px, 50px, 0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bg-ambient .orb { animation: none; }
   }
   /* CSS scroll-snap was too soft (proximity) or too hard (mandatory)
      on iOS Safari. The lock-on is JS-driven below — see
@@ -1563,6 +1635,18 @@
 </style>
 </head>
 <body>
+
+<!-- Ambient background: drifting brand-color gradient orbs + a faint
+     dot grid. Sits behind everything via position: fixed + z-index -1
+     and never receives pointer events. Animations respect
+     prefers-reduced-motion (see the @media rule on .bg-ambient .orb). -->
+<div class="bg-ambient" aria-hidden="true">
+  <div class="grid-dots"></div>
+  <span class="orb orb-1"></span>
+  <span class="orb orb-2"></span>
+  <span class="orb orb-3"></span>
+</div>
+
 
 <div class="nav-glow"></div>
 <div class="pricing-glow"></div>
