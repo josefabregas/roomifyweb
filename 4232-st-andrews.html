@@ -193,43 +193,52 @@
     pointer-events: none;
   }
 
-  /* Lightbox side-by-side layout for paired tiles. Falls back to a
-     single big image when no pair exists. */
+  /* Lightbox side-by-side layout — each photo fills its 50% half of
+     the viewport without arbitrary height caps. On desktop side-by-side;
+     stacked top/bottom on mobile (handled in the @media block). */
   .lightbox-pair {
     display: flex;
-    gap: 8px;
-    max-width: 96vw;
-    max-height: 86vh;
-    align-items: stretch;
+    gap: 6px;
+    width: 100vw;
+    height: 100vh;
+    padding: 12px 64px;        /* horizontal padding leaves room for prev/next */
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
   }
   .lightbox-pair > .side {
     position: relative;
     flex: 1;
     min-width: 0;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .lightbox-pair img {
     max-width: 100%;
-    max-height: 86vh;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: contain;
     display: block;
   }
   .lightbox-pair .side-label {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    padding: 4px 10px;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 14px;
     border-radius: 999px;
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    z-index: 2;
   }
   .lightbox-pair .side-label.before { color: #FFD56C; }
   .lightbox-pair .side-label.after  { color: var(--accent); }
@@ -363,9 +372,18 @@
     .stat:nth-child(2) { border-right: 0; }
     .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--border); }
     .grid { grid-template-columns: 1fr 1fr; gap: 2px; }
-    /* Stack the lightbox pair on mobile — side-by-side would be too narrow */
-    .lightbox-pair { flex-direction: column; gap: 4px; max-height: 88vh; }
-    .lightbox-pair img { max-height: 42vh; }
+    /* Stack the lightbox pair on mobile — side-by-side would be too narrow.
+       Each photo gets ~half the screen height. */
+    .lightbox-pair {
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px 12px;
+    }
+    .lightbox-pair > .side {
+      height: 50%;
+      width: 100%;
+    }
+    .lightbox-pair .side-label { top: 12px; }
     .closing-card { padding: 40px 20px; }
     .footer-row { flex-direction: column; align-items: flex-start; }
     footer a { margin-left: 0; margin-right: 14px; }
