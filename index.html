@@ -1214,9 +1214,7 @@
     object-fit: cover;
     display: block;
   }
-  /* Auto-scrolling marquee — overlays the bottom edge of the hero image
-     instead of restructuring its container (which broke the hero's sizing
-     last time). Continuous loop, pauses on hover. */
+  /* Auto-scrolling marquee — overlays the bottom edge of the hero. */
   .showcase-carousel {
     position: absolute;
     bottom: 0;
@@ -1224,11 +1222,11 @@
     right: 0;
     height: 92px;
     overflow: hidden;
-    background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.85) 100%);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.90) 100%);
     border-top: 1px solid rgba(255,255,255,0.10);
     z-index: 2;
+    /* No backdrop-filter — the GPU work it triggers was making the
+       animation stutter / drop frames on slower machines. */
   }
   .showcase-carousel::before,
   .showcase-carousel::after {
@@ -1260,7 +1258,10 @@
     width: max-content;
     padding: 8px 0;
     animation: scroll-carousel 22s linear infinite;
-    will-change: transform;
+    /* Force GPU compositor without will-change (which was triggering
+       layer thrashing on Safari + WebKit-derived browsers). translate3d
+       puts the element on its own GPU layer reliably. */
+    transform: translate3d(0, 0, 0);
   }
   .carousel-set {
     display: flex;
@@ -1281,12 +1282,13 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     flex-shrink: 0;
   }
-  .showcase-carousel:hover .carousel-track {
-    animation-play-state: paused;
-  }
+  /* Removed pause-on-hover: was being confused for the "glitch" since
+     the strip would freeze whenever the user moved the cursor over it
+     and then snap back to motion when they moved away. Continuous
+     scroll is less ambiguous. */
   @keyframes scroll-carousel {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-50%, 0, 0); }
   }
   .showcase-badge {
     position: absolute;
