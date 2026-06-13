@@ -979,6 +979,11 @@
     width: auto;
     display: block;
   }
+  /* Compass ships a black-on-transparent wordmark; on the dark bg
+     it's invisible without inversion. Filter flips it to white. */
+  .marquee-track .platform img.invert {
+    filter: invert(1) brightness(1.05);
+  }
   /* Fallback text for any logos that 404 from the CDN. */
   .marquee-track .platform .text {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
@@ -1689,24 +1694,27 @@
       with `/assets/<brand>.svg`. Doubled list so the keyframes
       loop seamlessly.
     -->
+    <!-- Track duplicated so the infinite-loop animation (translateX 0
+         to -50%) has a seamless second copy to scroll into view. MLS
+         dropped intentionally — no canonical logo across the hundreds
+         of regional MLSes, and a styled "MLS" text label among real
+         logos undercuts Jose's "no text" ask. -->
     <div class="marquee-track">
-      <span class="platform"><span class="text">MLS</span></span>
-      <span class="platform"><span class="text">Zillow</span></span>
-      <span class="platform"><span class="text">Realtor.com</span></span>
-      <span class="platform"><span class="text">Airbnb</span></span>
-      <span class="platform"><span class="text">Vrbo</span></span>
-      <span class="platform"><span class="text">Compass</span></span>
-      <span class="platform"><span class="text">Redfin</span></span>
-      <span class="platform"><span class="text">Trulia</span></span>
+      <span class="platform"><img src="/assets/platforms/zillow.svg" alt="Zillow" /></span>
+      <span class="platform"><img src="/assets/platforms/realtor.png" alt="Realtor.com" /></span>
+      <span class="platform"><img src="/assets/platforms/airbnb.svg" alt="Airbnb" /></span>
+      <span class="platform"><img src="/assets/platforms/vrbo.svg" alt="Vrbo" /></span>
+      <span class="platform"><img src="/assets/platforms/compass.svg" alt="Compass" class="invert" /></span>
+      <span class="platform"><img src="/assets/platforms/redfin.png" alt="Redfin" /></span>
+      <span class="platform"><img src="/assets/platforms/trulia.png" alt="Trulia" /></span>
 
-      <span class="platform"><span class="text">MLS</span></span>
-      <span class="platform"><span class="text">Zillow</span></span>
-      <span class="platform"><span class="text">Realtor.com</span></span>
-      <span class="platform"><span class="text">Airbnb</span></span>
-      <span class="platform"><span class="text">Vrbo</span></span>
-      <span class="platform"><span class="text">Compass</span></span>
-      <span class="platform"><span class="text">Redfin</span></span>
-      <span class="platform"><span class="text">Trulia</span></span>
+      <span class="platform"><img src="/assets/platforms/zillow.svg" alt="" aria-hidden="true" /></span>
+      <span class="platform"><img src="/assets/platforms/realtor.png" alt="" aria-hidden="true" /></span>
+      <span class="platform"><img src="/assets/platforms/airbnb.svg" alt="" aria-hidden="true" /></span>
+      <span class="platform"><img src="/assets/platforms/vrbo.svg" alt="" aria-hidden="true" /></span>
+      <span class="platform"><img src="/assets/platforms/compass.svg" alt="" aria-hidden="true" class="invert" /></span>
+      <span class="platform"><img src="/assets/platforms/redfin.png" alt="" aria-hidden="true" /></span>
+      <span class="platform"><img src="/assets/platforms/trulia.png" alt="" aria-hidden="true" /></span>
     </div>
   </div>
 </section>
