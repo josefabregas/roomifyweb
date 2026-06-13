@@ -1246,49 +1246,30 @@
     right: 0;
     background: linear-gradient(270deg, rgba(0,0,0,0.85) 0%, transparent 100%);
   }
-  /* Canonical CSS marquee — TWO identical sibling tracks side-by-side,
-     each shrink-wrapped to its content. Animate the outer parent by
-     translateX(-100% - gap). When the first track exits the visible
-     area, the second is exactly where the first started. No math
-     about percentages of variable widths, no glitches if images load
-     at different times. */
+  /* Matches the .marquee pattern already proven on this page (used by
+     the platforms section above). Inline-duplicated items inside ONE
+     track with width: max-content, animated 0 → -50%. No sub-divs,
+     no translate3d, no will-change — those were causing the flicker. */
   .carousel-track {
     display: flex;
-    height: 100%;
-    width: max-content;
-    padding: 8px 0;
-    animation: scroll-carousel 22s linear infinite;
-    /* Force GPU compositor without will-change (which was triggering
-       layer thrashing on Safari + WebKit-derived browsers). translate3d
-       puts the element on its own GPU layer reliably. */
-    transform: translate3d(0, 0, 0);
-  }
-  .carousel-set {
-    display: flex;
     gap: 8px;
-    padding-right: 8px;            /* matches the inter-set spacing */
-    flex-shrink: 0;
+    height: 100%;
+    padding: 8px 0;
+    width: max-content;
+    animation: scroll-carousel 22s linear infinite;
   }
-  /* Intentionally NO padding-left on first set — keeping both sets
-     identical-width is what makes translateX(-50%) land exactly on
-     set 2's start. The strip's own left edge-fade gradient hides the
-     fact that the leading photo touches the container edge. */
-  .carousel-set img {
+  .carousel-track img {
+    flex: 0 0 auto;
     height: 100%;
     width: auto;
     display: block;
     border-radius: 6px;
     object-fit: cover;
     box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    flex-shrink: 0;
   }
-  /* Removed pause-on-hover: was being confused for the "glitch" since
-     the strip would freeze whenever the user moved the cursor over it
-     and then snap back to motion when they moved away. Continuous
-     scroll is less ambiguous. */
   @keyframes scroll-carousel {
-    from { transform: translate3d(0, 0, 0); }
-    to   { transform: translate3d(-50%, 0, 0); }
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
   }
   .showcase-badge {
     position: absolute;
@@ -1762,34 +1743,30 @@
            so the 0 → -50% keyframe creates a seamless infinite loop. -->
       <div class="showcase-carousel" aria-hidden="true">
         <div class="carousel-track">
-          <div class="carousel-set">
-            <img src="/assets/4232-st-andrews/IMG_0752.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0775.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0689.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0610.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0713.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0780.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0625.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0701.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0717.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0726.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0676.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0668.webp" alt="" />
-          </div>
-          <div class="carousel-set">
-            <img src="/assets/4232-st-andrews/IMG_0752.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0775.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0689.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0610.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0713.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0780.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0625.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0701.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0717.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0726.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0676.webp" alt="" />
-            <img src="/assets/4232-st-andrews/IMG_0668.webp" alt="" />
-          </div>
+          <img src="/assets/4232-st-andrews/IMG_0752.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0775.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0689.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0610.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0713.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0780.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0625.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0701.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0717.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0726.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0676.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0668.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0752.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0775.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0689.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0610.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0713.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0780.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0625.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0701.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0717.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0726.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0676.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0668.webp" alt="" />
         </div>
       </div>
     </div>
