@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Residences #22 — A full listing shot with Roomify</title>
+<meta name="description" content="18 magazine-quality real estate photos. Every photo on this listing was shot on an iPhone and Roomified in one tap for a single $49 charge — full before/after viewer included." />
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="stylesheet" href="/css/listing.css" />
+</head>
+<body>
+
+<div class="nav-wrap container">
+  <nav class="nav-pill">
+    <a class="brand" href="/">
+      <img src="/assets/logo-white.png" alt="" />
+      ROOMIFY
+    </a>
+    <a class="nav-cta" href="/#download">Download</a>
+  </nav>
+</div>
+
+<main class="container">
+
+  <section class="hero">
+    <img class="hero-image" src="/assets/residences-22/after-01.webp" alt="Residences #22 — shot on iPhone and Roomified" />
+    <div class="hero-overlay">
+      <span class="hero-badge">A full listing — shot with Roomify</span>
+      <h1>Residences #22</h1>
+      <p class="hero-sub">18 magazine-quality real estate photos. All shot on an iPhone. All Roomified in one tap.</p>
+      <p class="hero-credit">
+        Tap any photo to see the iPhone original next to its Roomified version.
+      </p>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-value">18</div>
+      <div class="stat-label">Photos</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">1 iPhone</div>
+      <div class="stat-label">Hardware</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">$49</div>
+      <div class="stat-label">Total cost</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">~5 min</div>
+      <div class="stat-label">Shoot + Roomify</div>
+    </div>
+  </section>
+
+  <p class="grid-intro">
+    Tap any photo to open the <strong>before &amp; after</strong> side-by-side. Every single image below started as a raw iPhone shot.
+  </p>
+
+  <div class="grid" id="photo-grid"></div>
+
+  <section class="closing-card">
+    <h2>This is what <span class="price">$49</span> looks like.</h2>
+    <p>One purchase. Up to 150 photos per listing. No subscription, no overage, no per-photo math. Shoot the whole listing on your iPhone and have it MLS-ready before you leave the driveway.</p>
+    <a href="/#download" class="download-btn">Download Roomify on iPhone &rarr;</a>
+  </section>
+
+</main>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-hidden="true">
+  <button class="lightbox-close" aria-label="Close" onclick="closeLightbox()">&times;</button>
+  <button class="lightbox-nav lightbox-prev" aria-label="Previous" onclick="navLightbox(-1)">&lsaquo;</button>
+  <img id="lightbox-img" src="" alt="" />
+  <div class="lightbox-pair" id="lightbox-pair" style="display:none;">
+    <div class="side"><span class="side-label before">Before</span><img id="lightbox-before" src="" alt="" /></div>
+    <div class="side"><span class="side-label after">After</span><img id="lightbox-after" src="" alt="" /></div>
+  </div>
+  <button class="lightbox-nav lightbox-next" aria-label="Next" onclick="navLightbox(1)">&rsaquo;</button>
+  <div class="lightbox-counter" id="lightbox-counter">1 / 18</div>
+</div>
+
+<footer>
+  <div class="container footer-row">
+    <div>&copy; 2026 Avemtis Properties, LLC. Roomify is a product of Avemtis Properties, LLC.</div>
+    <div>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="mailto:support@roomifyapp.ai">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Per-listing data. Photos = the Roomified "after" set in capture
+     order. Pairs map each after's filename to its matching iPhone
+     original — full coverage here, so every tile opens a side-by-side
+     before/after in the lightbox. */
+  window.LISTING = {
+    photos: [
+      "/assets/residences-22/after-01.webp",
+      "/assets/residences-22/after-02.webp",
+      "/assets/residences-22/after-03.webp",
+      "/assets/residences-22/after-04.webp",
+      "/assets/residences-22/after-05.webp",
+      "/assets/residences-22/after-06.webp",
+      "/assets/residences-22/after-07.webp",
+      "/assets/residences-22/after-08.webp",
+      "/assets/residences-22/after-09.webp",
+      "/assets/residences-22/after-10.webp",
+      "/assets/residences-22/after-11.webp",
+      "/assets/residences-22/after-12.webp",
+      "/assets/residences-22/after-13.webp",
+      "/assets/residences-22/after-14.webp",
+      "/assets/residences-22/after-15.webp",
+      "/assets/residences-22/after-16.webp",
+      "/assets/residences-22/after-17.webp",
+      "/assets/residences-22/after-18.webp"
+    ],
+    pairs: {
+      "after-01.webp": "/assets/residences-22/before-01.webp",
+      "after-02.webp": "/assets/residences-22/before-02.webp",
+      "after-03.webp": "/assets/residences-22/before-03.webp",
+      "after-04.webp": "/assets/residences-22/before-04.webp",
+      "after-05.webp": "/assets/residences-22/before-05.webp",
+      "after-06.webp": "/assets/residences-22/before-06.webp",
+      "after-07.webp": "/assets/residences-22/before-07.webp",
+      "after-08.webp": "/assets/residences-22/before-08.webp",
+      "after-09.webp": "/assets/residences-22/before-09.webp",
+      "after-10.webp": "/assets/residences-22/before-10.webp",
+      "after-11.webp": "/assets/residences-22/before-11.webp",
+      "after-12.webp": "/assets/residences-22/before-12.webp",
+      "after-13.webp": "/assets/residences-22/before-13.webp",
+      "after-14.webp": "/assets/residences-22/before-14.webp",
+      "after-15.webp": "/assets/residences-22/before-15.webp",
+      "after-16.webp": "/assets/residences-22/before-16.webp",
+      "after-17.webp": "/assets/residences-22/before-17.webp",
+      "after-18.webp": "/assets/residences-22/before-18.webp"
+    }
+  };
+</script>
+<script src="/js/listing.js"></script>
+
+</body>
+</html>

@@ -1195,6 +1195,9 @@
      emotional turn from "abstract product" to "look what one $49
      run actually produces on a real $1M+ home." */
   .showcase { padding-top: 64px; padding-bottom: 56px; }
+  /* When the showcase section has more than one listing (which is the
+     accumulating-listings case), give the cards breathing room. */
+  .showcase-card + .showcase-card { margin-top: 28px; }
   .showcase-card {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
@@ -1675,6 +1678,24 @@
 </section>
 
 <section class="showcase container reveal" id="demo-listing">
+  <div class="showcase-card">
+    <div class="showcase-media">
+      <img class="showcase-hero" src="/assets/residences-22/after-01.webp" alt="Residences #22 — shot on iPhone and Roomified" />
+      <span class="showcase-badge">Latest listing · before &amp; after</span>
+    </div>
+    <div class="showcase-text">
+      <span class="showcase-address">Residences #22</span>
+      <h2>Every shot.<br />Before and after.</h2>
+      <p>The newest listing on the site — tap any photo to see the raw iPhone original next to the Roomified version. Side-by-side on every single one, no cherry-picking.</p>
+      <div class="showcase-stats">
+        <div><strong>18</strong>Photos</div>
+        <div><strong>1 iPhone</strong>Hardware</div>
+        <div><strong>$49</strong>Total</div>
+      </div>
+      <a class="showcase-cta" href="/residences-22.html">See the full listing →</a>
+    </div>
+  </div>
+
   <div class="showcase-card">
     <div class="showcase-media">
       <img class="showcase-hero" src="/assets/4232-st-andrews/IMG_0754.webp" alt="4232 St Andrews — Mediterranean front exterior, shot on iPhone and Roomified" />

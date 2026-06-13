@@ -1,0 +1,402 @@
+/* Shared styles for individual listing showcase pages
+   (e.g. /4232-st-andrews.html, /residences-22.html).
+   Each page links this file then defines its own data
+   inline via window.LISTING + a small content block. */
+
+:root {
+  --bg: #000000;
+  --bg-card: #0c0c0c;
+  --text: #ffffff;
+  --text-muted: #a3a3a3;
+  --text-subtle: #5a5a5a;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #5ce0a6;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.55;
+}
+.container { max-width: 1280px; margin: 0 auto; padding: 0 28px; }
+
+.nav-wrap { padding-top: 22px; display: flex; justify-content: center; }
+.nav-pill {
+  display: inline-flex; align-items: center; gap: 24px;
+  padding: 6px 6px 6px 18px;
+  background: rgba(15, 15, 15, 0.7);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+.brand {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 15px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--text); text-decoration: none;
+}
+.brand img { width: 22px; height: 22px; display: block; }
+.nav-cta {
+  background: var(--text); color: #000;
+  text-decoration: none; font-size: 13px; font-weight: 600;
+  padding: 8px 16px; border-radius: 999px;
+  transition: opacity 0.15s ease;
+}
+.nav-cta:hover { opacity: 0.85; }
+
+/* Hero */
+.hero {
+  position: relative;
+  margin-top: 32px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.hero-image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  /* Stronger gradient so the text reads on bright daylight photos.
+     The old 0.10 → 0.90 only darkened the bottom; on a sun-lit
+     exterior the top half is too bright for white type. */
+  background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.92) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 48px;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(92, 224, 166, 0.15);
+  border: 1px solid rgba(92, 224, 166, 0.4);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 16px;
+  width: max-content;
+  text-transform: uppercase;
+}
+.hero h1 {
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 12px;
+}
+.hero-sub {
+  font-size: clamp(15px, 1.4vw, 18px);
+  color: var(--text-muted);
+  max-width: 640px;
+  margin-bottom: 4px;
+}
+.hero-credit {
+  font-size: 12px;
+  color: var(--text-subtle);
+  margin-top: 16px;
+  letter-spacing: 0.02em;
+}
+
+/* Stats strip */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin: 48px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stat {
+  padding: 28px 16px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.stat:last-child { border-right: 0; }
+.stat-value {
+  font-size: clamp(22px, 2.4vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Intro line above the grid */
+.grid-intro {
+  text-align: center;
+  margin: 0 0 28px;
+  color: var(--text-muted);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+.grid-intro strong { color: var(--text); }
+
+/* Photo grid — one big grid, no section dividers */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 4px;
+}
+.photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--bg-card);
+}
+.photo img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.photo:hover img { transform: scale(1.03); }
+/* "Has paired before" badge — top-right corner, only on tiles whose
+   after maps to a BEFORE in the manifest. Subtle but readable. */
+.photo .pair-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  color: var(--accent);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* Lightbox side-by-side layout — each photo fills its 50% half of
+   the viewport without arbitrary height caps. On desktop side-by-side;
+   stacked top/bottom on mobile (handled in the @media block). */
+.lightbox-pair {
+  display: flex;
+  gap: 6px;
+  width: 100vw;
+  height: 100vh;
+  padding: 12px 64px;        /* horizontal padding leaves room for prev/next */
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox-pair > .side {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Defensive: prevents any oversized inner img from overflowing into
+     its neighbor's half (the actual bug Jose hit). */
+  overflow: hidden;
+}
+.lightbox-pair img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+.lightbox-pair .side-label {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  z-index: 2;
+}
+.lightbox-pair .side-label.before { color: #FFD56C; }
+.lightbox-pair .side-label.after  { color: var(--accent); }
+
+/* CTA bottom card */
+.closing-card {
+  margin: 80px 0 56px;
+  padding: 64px 32px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.closing-card h2 {
+  font-size: clamp(28px, 3.6vw, 44px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.closing-card p {
+  color: var(--text-muted);
+  font-size: 17px;
+  max-width: 560px;
+  margin: 0 auto 28px;
+}
+.closing-card .price { color: var(--accent); }
+.closing-card .download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  background: var(--text);
+  color: #000;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  transition: opacity 0.15s ease;
+}
+.closing-card .download-btn:hover { opacity: 0.88; }
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.96);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.lightbox.open { display: flex; }
+/* Scoped to the single-image #lightbox-img only — without this scoping
+   the rule also applied to the imgs inside .lightbox-pair, forcing them
+   to render at up to 96vw / 86vh which then overflowed their flex side
+   and visually occluded the other image. */
+.lightbox > img {
+  max-width: 96vw;
+  max-height: 86vh;
+  object-fit: contain;
+  display: block;
+}
+.lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 0;
+  color: var(--text);
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 40px;
+  text-align: center;
+}
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 0;
+  color: var(--text);
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 48px;
+  text-align: center;
+}
+.lightbox-prev { left: 16px; }
+.lightbox-next { right: 16px; }
+.lightbox-counter {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text-subtle);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+/* Footer */
+footer {
+  padding: 40px 0 56px;
+  border-top: 1px solid var(--border);
+  color: var(--text-subtle);
+  font-size: 13px;
+  margin-top: 32px;
+}
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-left: 18px;
+  transition: color 0.15s ease;
+}
+footer a:hover { color: var(--text); }
+footer a:first-of-type { margin-left: 0; }
+
+@media (max-width: 720px) {
+  .container { padding: 0 16px; }
+  /* On mobile a 16:9 hero is only ~220px tall — way too short for the
+     badge + title + 2-line subtitle + credit. Switch to a taller 4:5
+     aspect so the overlay has room without cramping. */
+  .hero-image { aspect-ratio: 4 / 5; }
+  .hero-overlay { padding: 20px; gap: 8px; }
+  .hero h1 { font-size: 38px; line-height: 1.0; margin-bottom: 10px; }
+  .hero-sub { font-size: 14px; line-height: 1.45; margin-bottom: 2px; }
+  .hero-credit { font-size: 11px; line-height: 1.5; margin-top: 10px; }
+  .hero-badge { font-size: 10px; padding: 5px 10px; margin-bottom: 12px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .stat:nth-child(2) { border-right: 0; }
+  .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--border); }
+  .grid { grid-template-columns: 1fr 1fr; gap: 2px; }
+  /* Stack the lightbox pair on mobile — side-by-side would be too narrow.
+     Each photo gets ~half the screen height. */
+  .lightbox-pair {
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 12px;
+  }
+  .lightbox-pair > .side {
+    height: 50%;
+    width: 100%;
+  }
+  .lightbox-pair .side-label { top: 12px; }
+  .closing-card { padding: 40px 20px; }
+  .footer-row { flex-direction: column; align-items: flex-start; }
+  footer a { margin-left: 0; margin-right: 14px; }
+}
