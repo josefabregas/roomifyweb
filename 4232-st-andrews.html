@@ -170,6 +170,69 @@
     transition: transform 0.4s ease;
   }
   .photo:hover img { transform: scale(1.03); }
+  /* "Has paired before" badge — top-right corner, only on tiles whose
+     after maps to a BEFORE in the manifest. Subtle but readable. */
+  .photo .pair-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 8px;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    color: var(--accent);
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  /* Lightbox side-by-side layout for paired tiles. Falls back to a
+     single big image when no pair exists. */
+  .lightbox-pair {
+    display: flex;
+    gap: 8px;
+    max-width: 96vw;
+    max-height: 86vh;
+    align-items: stretch;
+  }
+  .lightbox-pair > .side {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox-pair img {
+    max-width: 100%;
+    max-height: 86vh;
+    object-fit: contain;
+    display: block;
+  }
+  .lightbox-pair .side-label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .lightbox-pair .side-label.before { color: #FFD56C; }
+  .lightbox-pair .side-label.after  { color: var(--accent); }
 
   /* CTA bottom card */
   .closing-card {
@@ -300,6 +363,9 @@
     .stat:nth-child(2) { border-right: 0; }
     .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--border); }
     .grid { grid-template-columns: 1fr 1fr; gap: 2px; }
+    /* Stack the lightbox pair on mobile — side-by-side would be too narrow */
+    .lightbox-pair { flex-direction: column; gap: 4px; max-height: 88vh; }
+    .lightbox-pair img { max-height: 42vh; }
     .closing-card { padding: 40px 20px; }
     .footer-row { flex-direction: column; align-items: flex-start; }
     footer a { margin-left: 0; margin-right: 14px; }
@@ -368,7 +434,13 @@
 <div class="lightbox" id="lightbox" role="dialog" aria-hidden="true">
   <button class="lightbox-close" aria-label="Close" onclick="closeLightbox()">&times;</button>
   <button class="lightbox-nav lightbox-prev" aria-label="Previous" onclick="navLightbox(-1)">&lsaquo;</button>
+  <!-- Single-image view (no paired before) -->
   <img id="lightbox-img" src="" alt="" />
+  <!-- Pair view (before + after side-by-side / stacked on mobile) -->
+  <div class="lightbox-pair" id="lightbox-pair" style="display:none;">
+    <div class="side"><span class="side-label before">Before</span><img id="lightbox-before" src="" alt="" /></div>
+    <div class="side"><span class="side-label after">After</span><img id="lightbox-after" src="" alt="" /></div>
+  </div>
   <button class="lightbox-nav lightbox-next" aria-label="Next" onclick="navLightbox(1)">&rsaquo;</button>
   <div class="lightbox-counter" id="lightbox-counter">1 / 38</div>
 </div>
@@ -390,6 +462,31 @@
      natural capture sequence, which roughly maps to a spatial walk. */
   const PHOTOS = ["/assets/4232-st-andrews/IMG_0754.webp", "/assets/4232-st-andrews/IMG_0752.webp", "/assets/4232-st-andrews/IMG_0774.webp", "/assets/4232-st-andrews/IMG_0775.webp", "/assets/4232-st-andrews/IMG_0750.webp", "/assets/4232-st-andrews/IMG_0749.webp", "/assets/4232-st-andrews/IMG_0748.webp", "/assets/4232-st-andrews/IMG_0632.webp", "/assets/4232-st-andrews/IMG_0713.webp", "/assets/4232-st-andrews/IMG_0636.webp", "/assets/4232-st-andrews/IMG_0644.webp", "/assets/4232-st-andrews/IMG_0633.webp", "/assets/4232-st-andrews/IMG_0642.webp", "/assets/4232-st-andrews/IMG_0780.webp", "/assets/4232-st-andrews/IMG_0647.webp", "/assets/4232-st-andrews/IMG_0712.webp", "/assets/4232-st-andrews/IMG_0689.webp", "/assets/4232-st-andrews/IMG_0613.webp", "/assets/4232-st-andrews/IMG_0610.webp", "/assets/4232-st-andrews/IMG_0692.webp", "/assets/4232-st-andrews/IMG_0649.webp", "/assets/4232-st-andrews/IMG_0703.webp", "/assets/4232-st-andrews/IMG_0625.webp", "/assets/4232-st-andrews/IMG_0628.webp", "/assets/4232-st-andrews/IMG_0619.webp", "/assets/4232-st-andrews/IMG_0715.webp", "/assets/4232-st-andrews/IMG_0746.webp", "/assets/4232-st-andrews/IMG_0726.webp", "/assets/4232-st-andrews/IMG_0721.webp", "/assets/4232-st-andrews/IMG_0718.webp", "/assets/4232-st-andrews/IMG_0717.webp", "/assets/4232-st-andrews/IMG_0734.webp", "/assets/4232-st-andrews/IMG_0737.webp", "/assets/4232-st-andrews/IMG_0741.webp", "/assets/4232-st-andrews/IMG_0673.webp", "/assets/4232-st-andrews/IMG_0612.webp", "/assets/4232-st-andrews/IMG_0676.webp", "/assets/4232-st-andrews/IMG_0621.webp"];
 
+  // Map of AFTER filename (last path segment) → BEFORE URL. Photos in this
+  // map render a "Before/After" badge on their grid tile and open the
+  // side-by-side lightbox layout when clicked. Photos NOT in the map open
+  // in the standard single-image lightbox (current behavior).
+  //
+  // 7 confirmed pairs from the 4232 St Andrews shoot. Each verified by eye
+  // against the camera-roll befores. More pairs not possible for this
+  // listing: the in-app camera shots' originals were lost before the
+  // camera-roll-save fix shipped.
+  const PAIRS = {
+    'IMG_0610.webp': '/assets/4232-st-andrews/befores/IMG_0540.webp', // kitchen stove + hood
+    'IMG_0613.webp': '/assets/4232-st-andrews/befores/IMG_0539.webp', // kitchen island from sofa
+    'IMG_0673.webp': '/assets/4232-st-andrews/befores/IMG_0545.webp', // laundry room
+    'IMG_0775.webp': '/assets/4232-st-andrews/befores/IMG_0512.webp', // garages: day → twilight
+    'IMG_0780.webp': '/assets/4232-st-andrews/befores/IMG_0517.webp', // main living room wide
+    'IMG_0625.webp': '/assets/4232-st-andrews/befores/IMG_0535.webp', // primary bathroom
+    'IMG_0619.webp': '/assets/4232-st-andrews/befores/IMG_0537.webp', // powder room
+  };
+
+  function getBeforeFor(afterUrl) {
+    const segs = afterUrl.split('/');
+    const filename = segs[segs.length - 1];
+    return PAIRS[filename] || null;
+  }
+
   const grid = document.getElementById('photo-grid');
   PHOTOS.forEach((src, idx) => {
     const wrap = document.createElement('div');
@@ -400,15 +497,38 @@
     img.src = src;
     img.alt = '';
     wrap.appendChild(img);
+    if (getBeforeFor(src)) {
+      const badge = document.createElement('span');
+      badge.className = 'pair-badge';
+      badge.textContent = 'Before · After';
+      wrap.appendChild(badge);
+    }
     grid.appendChild(wrap);
   });
 
   let currentIdx = 0;
+  function renderLightboxForIdx(idx) {
+    const afterUrl = PHOTOS[idx];
+    const beforeUrl = getBeforeFor(afterUrl);
+    const singleImg = document.getElementById('lightbox-img');
+    const pairEl   = document.getElementById('lightbox-pair');
+    if (beforeUrl) {
+      singleImg.style.display = 'none';
+      pairEl.style.display = 'flex';
+      document.getElementById('lightbox-before').src = beforeUrl;
+      document.getElementById('lightbox-after').src  = afterUrl;
+    } else {
+      pairEl.style.display = 'none';
+      singleImg.style.display = '';
+      singleImg.src = afterUrl;
+    }
+    document.getElementById('lightbox-counter').textContent =
+      `${idx + 1} / ${PHOTOS.length}`;
+  }
   function openLightbox(idx) {
     currentIdx = idx;
+    renderLightboxForIdx(idx);
     const lb = document.getElementById('lightbox');
-    document.getElementById('lightbox-img').src = PHOTOS[idx];
-    document.getElementById('lightbox-counter').textContent = `${idx + 1} / ${PHOTOS.length}`;
     lb.classList.add('open');
     lb.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -421,8 +541,7 @@
   }
   function navLightbox(delta) {
     currentIdx = (currentIdx + delta + PHOTOS.length) % PHOTOS.length;
-    document.getElementById('lightbox-img').src = PHOTOS[currentIdx];
-    document.getElementById('lightbox-counter').textContent = `${currentIdx + 1} / ${PHOTOS.length}`;
+    renderLightboxForIdx(currentIdx);
   }
   document.addEventListener('keydown', (e) => {
     if (!document.getElementById('lightbox').classList.contains('open')) return;
