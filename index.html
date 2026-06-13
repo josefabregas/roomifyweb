@@ -243,6 +243,36 @@
     display: inline-block;
     position: relative;
   }
+  /* "3 minutes." — the kicker line. Smaller than the other two so it
+     reads as the answer/punchline, not a third subject. Accent green
+     ties it to the brand. Fades in after Magazine-listings underline
+     finishes drawing (~1.1s) so the eye lands on it last. */
+  .hero h1 .time-line {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.22em;
+    color: var(--accent);
+    font-size: 0.7em;
+    letter-spacing: -0.025em;
+    font-weight: 600;
+    margin-top: 14px;
+    opacity: 0;
+    animation: timeLineIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.15s forwards;
+  }
+  @keyframes timeLineIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero h1 .timer-icon {
+    width: 0.78em;
+    height: 0.78em;
+    flex: 0 0 auto;
+    stroke: currentColor;
+    fill: none;
+    /* Lift slightly so the icon optically aligns with the cap-height
+       of the digits next to it rather than the baseline. */
+    transform: translateY(0.08em);
+  }
   /* Hand-drawn underline + faint glow behind 'Magazine listings.' */
   .hero h1 .muted-line .underline {
     position: absolute;
@@ -1583,6 +1613,20 @@
       <!-- Hand-drawn underline with stroke-dasharray reveal -->
       <svg class="underline" viewBox="0 0 400 18" preserveAspectRatio="none" aria-hidden="true">
         <path d="M6 11 C 80 4, 160 14, 240 7 S 380 11, 394 9" />
+      </svg>
+    </span>
+    <br />
+    <span class="time-line">
+      3 minutes.
+      <!-- Apple-style stopwatch glyph — round body, crown at top,
+           side button, hand at ~11 o'clock. Strokes inherit color
+           from the line so the green/white treatment stays unified. -->
+      <svg class="timer-icon" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="14" r="7.5" />
+        <path d="M9.5 2h5" />
+        <path d="M12 2v2" />
+        <path d="M17 5.5l1.6 1.6" />
+        <path d="M12 14L15 11" />
       </svg>
     </span>
   </h1>
