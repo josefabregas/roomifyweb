@@ -487,24 +487,12 @@
      natural capture sequence, which roughly maps to a spatial walk. */
   const PHOTOS = ["/assets/4232-st-andrews/IMG_0754.webp", "/assets/4232-st-andrews/IMG_0752.webp", "/assets/4232-st-andrews/IMG_0774.webp", "/assets/4232-st-andrews/IMG_0775.webp", "/assets/4232-st-andrews/IMG_0750.webp", "/assets/4232-st-andrews/IMG_0749.webp", "/assets/4232-st-andrews/IMG_0748.webp", "/assets/4232-st-andrews/IMG_0632.webp", "/assets/4232-st-andrews/IMG_0713.webp", "/assets/4232-st-andrews/IMG_0636.webp", "/assets/4232-st-andrews/IMG_0644.webp", "/assets/4232-st-andrews/IMG_0633.webp", "/assets/4232-st-andrews/IMG_0642.webp", "/assets/4232-st-andrews/IMG_0780.webp", "/assets/4232-st-andrews/IMG_0647.webp", "/assets/4232-st-andrews/IMG_0712.webp", "/assets/4232-st-andrews/IMG_0689.webp", "/assets/4232-st-andrews/IMG_0613.webp", "/assets/4232-st-andrews/IMG_0610.webp", "/assets/4232-st-andrews/IMG_0692.webp", "/assets/4232-st-andrews/IMG_0649.webp", "/assets/4232-st-andrews/IMG_0703.webp", "/assets/4232-st-andrews/IMG_0625.webp", "/assets/4232-st-andrews/IMG_0628.webp", "/assets/4232-st-andrews/IMG_0619.webp", "/assets/4232-st-andrews/IMG_0715.webp", "/assets/4232-st-andrews/IMG_0746.webp", "/assets/4232-st-andrews/IMG_0726.webp", "/assets/4232-st-andrews/IMG_0721.webp", "/assets/4232-st-andrews/IMG_0718.webp", "/assets/4232-st-andrews/IMG_0717.webp", "/assets/4232-st-andrews/IMG_0734.webp", "/assets/4232-st-andrews/IMG_0737.webp", "/assets/4232-st-andrews/IMG_0741.webp", "/assets/4232-st-andrews/IMG_0673.webp", "/assets/4232-st-andrews/IMG_0612.webp", "/assets/4232-st-andrews/IMG_0676.webp", "/assets/4232-st-andrews/IMG_0621.webp"];
 
-  // Map of AFTER filename (last path segment) → BEFORE URL. Photos in this
-  // map render a "Before/After" badge on their grid tile and open the
-  // side-by-side lightbox layout when clicked. Photos NOT in the map open
-  // in the standard single-image lightbox (current behavior).
-  //
-  // 7 confirmed pairs from the 4232 St Andrews shoot. Each verified by eye
-  // against the camera-roll befores. More pairs not possible for this
-  // listing: the in-app camera shots' originals were lost before the
-  // camera-roll-save fix shipped.
-  const PAIRS = {
-    'IMG_0610.webp': '/assets/4232-st-andrews/befores/IMG_0540.webp', // kitchen stove + hood
-    'IMG_0613.webp': '/assets/4232-st-andrews/befores/IMG_0539.webp', // kitchen island from sofa
-    'IMG_0673.webp': '/assets/4232-st-andrews/befores/IMG_0545.webp', // laundry room
-    'IMG_0775.webp': '/assets/4232-st-andrews/befores/IMG_0512.webp', // garages: day → twilight
-    'IMG_0780.webp': '/assets/4232-st-andrews/befores/IMG_0517.webp', // main living room wide
-    'IMG_0625.webp': '/assets/4232-st-andrews/befores/IMG_0535.webp', // primary bathroom
-    'IMG_0619.webp': '/assets/4232-st-andrews/befores/IMG_0537.webp', // powder room
-  };
+  // Pair viewer disabled for 4232 St Andrews — Jose chose "no before/afters
+  // beats a partial set." Most shots came from the in-app camera before the
+  // camera-roll-save fix shipped, so we never had clean pairs for them. The
+  // side-by-side rendering code stays in place (cheap, ~30 lines) so we can
+  // flip it back on for future listings just by adding entries here.
+  const PAIRS = {};
 
   function getBeforeFor(afterUrl) {
     const segs = afterUrl.split('/');
