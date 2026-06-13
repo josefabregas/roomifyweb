@@ -1207,66 +1207,12 @@
   .showcase-media {
     position: relative;
     min-height: 460px;
-    display: flex;
-    flex-direction: column;
   }
   .showcase-hero {
     width: 100%;
-    flex: 1;
-    object-fit: cover;
-    min-height: 0;   /* critical for flex-shrink in Safari */
-    display: block;
-  }
-  /* Auto-scrolling marquee of additional listing photos under the hero.
-     Continuous horizontal loop — pauses on hover so users can stop a
-     specific thumbnail mid-flight if they want a closer look. */
-  .showcase-carousel {
-    height: 96px;
-    overflow: hidden;
-    border-top: 1px solid var(--border);
-    background: var(--bg-card);
-    position: relative;
-  }
-  .showcase-carousel::before,
-  .showcase-carousel::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 48px;
-    z-index: 2;
-    pointer-events: none;
-  }
-  .showcase-carousel::before {
-    left: 0;
-    background: linear-gradient(90deg, var(--bg-card) 0%, transparent 100%);
-  }
-  .showcase-carousel::after {
-    right: 0;
-    background: linear-gradient(270deg, var(--bg-card) 0%, transparent 100%);
-  }
-  .carousel-track {
-    display: flex;
-    gap: 6px;
-    padding: 8px;
-    width: max-content;
     height: 100%;
-    animation: scroll-carousel 42s linear infinite;
-  }
-  .carousel-track img {
-    height: 100%;
-    width: auto;
-    display: block;
-    border-radius: 6px;
     object-fit: cover;
-    opacity: 0.95;
-  }
-  .showcase-carousel:hover .carousel-track {
-    animation-play-state: paused;
-  }
-  @keyframes scroll-carousel {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+    display: block;
   }
   .showcase-badge {
     position: absolute;
@@ -1733,39 +1679,6 @@
     <div class="showcase-media">
       <img class="showcase-hero" src="/assets/4232-st-andrews/IMG_0754.webp" alt="4232 St Andrews — Mediterranean front exterior, shot on iPhone and Roomified" />
       <span class="showcase-badge">Real listing</span>
-      <!-- Auto-scrolling marquee. Photo list is DUPLICATED inside the
-           track so the keyframe animation (0% → -50%) creates a perfectly
-           seamless loop — when the visible window reaches the second
-           copy's start it's identical to the first copy's start. -->
-      <div class="showcase-carousel" aria-hidden="true">
-        <div class="carousel-track">
-          <img src="/assets/4232-st-andrews/IMG_0752.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0775.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0689.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0610.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0713.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0780.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0625.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0701.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0717.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0726.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0676.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0668.webp" alt="" />
-          <!-- duplicate set for seamless infinite loop -->
-          <img src="/assets/4232-st-andrews/IMG_0752.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0775.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0689.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0610.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0713.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0780.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0625.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0701.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0717.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0726.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0676.webp" alt="" />
-          <img src="/assets/4232-st-andrews/IMG_0668.webp" alt="" />
-        </div>
-      </div>
     </div>
     <div class="showcase-text">
       <span class="showcase-address">4232 St Andrews Blvd · Las Colinas, TX</span>
