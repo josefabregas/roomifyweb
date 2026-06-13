@@ -1214,6 +1214,63 @@
     object-fit: cover;
     display: block;
   }
+  /* Auto-scrolling marquee — overlays the bottom edge of the hero image
+     instead of restructuring its container (which broke the hero's sizing
+     last time). Continuous loop, pauses on hover. */
+  .showcase-carousel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 92px;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.85) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255,255,255,0.10);
+    z-index: 2;
+  }
+  .showcase-carousel::before,
+  .showcase-carousel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .showcase-carousel::before {
+    left: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+  }
+  .showcase-carousel::after {
+    right: 0;
+    background: linear-gradient(270deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+  }
+  .carousel-track {
+    display: flex;
+    gap: 6px;
+    padding: 8px;
+    width: max-content;
+    height: 100%;
+    animation: scroll-carousel 42s linear infinite;
+  }
+  .carousel-track img {
+    height: 100%;
+    width: auto;
+    display: block;
+    border-radius: 6px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .showcase-carousel:hover .carousel-track {
+    animation-play-state: paused;
+  }
+  @keyframes scroll-carousel {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
   .showcase-badge {
     position: absolute;
     top: 20px;
@@ -1302,6 +1359,9 @@
     .showcase { padding-top: 32px; padding-bottom: 24px; }
     .showcase-card { grid-template-columns: 1fr; }
     .showcase-media { min-height: 260px; }
+    /* Hide the marquee on mobile — the card already stacks vertically
+       there and the 92px strip just steals room from the hero. */
+    .showcase-carousel { display: none; }
     .showcase-text { padding: 32px 24px; }
     .showcase-stats { gap: 20px; }
     .showcase-stats strong { font-size: 18px; }
@@ -1679,6 +1739,36 @@
     <div class="showcase-media">
       <img class="showcase-hero" src="/assets/4232-st-andrews/IMG_0754.webp" alt="4232 St Andrews — Mediterranean front exterior, shot on iPhone and Roomified" />
       <span class="showcase-badge">Real listing</span>
+      <!-- Marquee overlays the bottom of the hero. Photo list is duplicated
+           so the 0 → -50% keyframe creates a seamless infinite loop. -->
+      <div class="showcase-carousel" aria-hidden="true">
+        <div class="carousel-track">
+          <img src="/assets/4232-st-andrews/IMG_0752.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0775.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0689.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0610.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0713.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0780.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0625.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0701.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0717.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0726.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0676.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0668.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0752.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0775.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0689.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0610.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0713.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0780.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0625.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0701.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0717.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0726.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0676.webp" alt="" />
+          <img src="/assets/4232-st-andrews/IMG_0668.webp" alt="" />
+        </div>
+      </div>
     </div>
     <div class="showcase-text">
       <span class="showcase-address">4232 St Andrews Blvd · Las Colinas, TX</span>
