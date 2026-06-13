@@ -377,7 +377,15 @@
 
   @media (max-width: 720px) {
     .container { padding: 0 16px; }
-    .hero-overlay { padding: 24px; }
+    /* On mobile a 16:9 hero is only ~220px tall — way too short for the
+       badge + title + 2-line subtitle + credit. Switch to a taller 4:5
+       aspect so the overlay has room without cramping. */
+    .hero-image { aspect-ratio: 4 / 5; }
+    .hero-overlay { padding: 20px; gap: 8px; }
+    .hero h1 { font-size: 38px; line-height: 1.0; margin-bottom: 10px; }
+    .hero-sub { font-size: 14px; line-height: 1.45; margin-bottom: 2px; }
+    .hero-credit { font-size: 11px; line-height: 1.5; margin-top: 10px; }
+    .hero-badge { font-size: 10px; padding: 5px 10px; margin-bottom: 12px; }
     .stats { grid-template-columns: repeat(2, 1fr); }
     .stat:nth-child(2) { border-right: 0; }
     .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--border); }
