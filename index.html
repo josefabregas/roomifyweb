@@ -1211,6 +1211,15 @@
     position: relative;
     min-height: 460px;
   }
+  /* Bottom gradient under the address — keeps it readable on any photo
+     (bright daylight, dark interior, doesn't matter). */
+  .showcase-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.62) 100%);
+    pointer-events: none;
+  }
   .showcase-hero {
     width: 100%;
     height: 100%;
@@ -1221,6 +1230,7 @@
     position: absolute;
     top: 20px;
     left: 20px;
+    z-index: 2;
     padding: 6px 12px;
     background: rgba(0, 0, 0, 0.55);
     backdrop-filter: blur(10px);
@@ -1239,16 +1249,21 @@
     flex-direction: column;
     justify-content: center;
   }
-  /* Address label above the headline — small uppercase tracked text
-     so visitors instantly clock this as a REAL listing, not stock copy. */
+  /* Address overlay — sits at the bottom-left of the hero image, big
+     mixed-case white type, magazine caption style. Lives on top of
+     the photo so it works as a credibility cue at-a-glance. */
   .showcase-address {
-    display: inline-block;
-    font-size: 11px;
+    position: absolute;
+    left: 28px;
+    bottom: 22px;
+    z-index: 2;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(20px, 2vw, 28px);
     font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
   }
   .showcase-text h2 {
     font-size: clamp(28px, 3.4vw, 40px);
@@ -1308,6 +1323,11 @@
     .showcase-text { padding: 32px 24px; }
     .showcase-stats { gap: 20px; }
     .showcase-stats strong { font-size: 18px; }
+    .showcase-address {
+      left: 18px;
+      bottom: 16px;
+      font-size: 19px;
+    }
   }
 
   .sticky-cta {
@@ -1682,9 +1702,9 @@
     <div class="showcase-media">
       <img class="showcase-hero" src="/assets/residences-22/after-18.webp" alt="Residences #22 — covered patio overlooking the golf course at sunset, shot on iPhone and Roomified" />
       <span class="showcase-badge">Latest listing · before &amp; after</span>
+      <span class="showcase-address">Residences #22</span>
     </div>
     <div class="showcase-text">
-      <span class="showcase-address">Residences #22</span>
       <h2>Every shot.<br />Before and after.</h2>
       <p>The newest listing on the site — tap any photo to see the raw iPhone original next to the Roomified version. Side-by-side on every single one, no cherry-picking.</p>
       <div class="showcase-stats">
@@ -1700,9 +1720,9 @@
     <div class="showcase-media">
       <img class="showcase-hero" src="/assets/4232-st-andrews/IMG_0754.webp" alt="4232 St Andrews — Mediterranean front exterior, shot on iPhone and Roomified" />
       <span class="showcase-badge">Real listing</span>
+      <span class="showcase-address">4232 St Andrews Blvd · Las Colinas, TX</span>
     </div>
     <div class="showcase-text">
-      <span class="showcase-address">4232 St Andrews Blvd · Las Colinas, TX</span>
       <h2>One iPhone.<br />One $49 charge.<br />A whole home.</h2>
       <p>A custom Mediterranean home, fully shot on an iPhone and Roomified in one tap. Every photo on the live listing — including the one you're looking at — came out of a single $49 purchase.</p>
       <div class="showcase-stats">
