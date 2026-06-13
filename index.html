@@ -28,6 +28,7 @@
     --border: rgba(255, 255, 255, 0.08);
     --border-strong: rgba(255, 255, 255, 0.16);
     --glow: rgba(92, 224, 166, 0.16);
+    --accent: #5ce0a6;
 
     /* Horizontal padding scales up on mobile so the content
        doesn't feel cramped against the phone bezel. */
@@ -177,21 +178,38 @@
   .nav-cta:active { transform: scale(0.97); }
 
   /* In-page anchor links between brand and the Download CTA. Smooth
-     scrolling is handled by `scroll-behavior: smooth` on <html>. */
+     scrolling is handled by `scroll-behavior: smooth` on <html>.
+     Styling is Stripe/Linear-tier: white text, slim accent underline
+     that grows from the left on hover. */
   .nav-links {
     display: flex;
     align-items: center;
-    gap: 28px;
+    gap: 32px;
   }
   .nav-link {
-    color: var(--text-muted);
+    position: relative;
+    color: var(--text);
     text-decoration: none;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 500;
-    letter-spacing: 0.02em;
-    transition: color 0.15s ease;
+    letter-spacing: 0.005em;
+    padding: 6px 0;
+    transition: color 0.18s ease;
   }
-  .nav-link:hover { color: var(--text); }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 2px;
+    height: 1.5px;
+    background: var(--accent, #5ce0a6);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-link:hover { color: var(--accent, #5ce0a6); }
+  .nav-link:hover::after { transform: scaleX(1); }
   /* Account for the nav height so scroll lands just below it — without
      this the section's title hides under the (transparent) nav bar. */
   html { scroll-behavior: smooth; scroll-padding-top: 24px; }
@@ -1494,8 +1512,8 @@
       ROOMIFY
     </a>
     <div class="nav-links">
-      <a class="nav-link" href="#demo-listing">Demo listing</a>
       <a class="nav-link" href="#how-it-works">How it works</a>
+      <a class="nav-link" href="#demo-listing">Demo listing</a>
       <a class="nav-link" href="#pricing">Pricing</a>
       <a class="nav-link" href="#faq">FAQ</a>
     </div>
