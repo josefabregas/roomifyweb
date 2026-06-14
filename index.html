@@ -118,6 +118,29 @@
   @media (prefers-reduced-motion: reduce) {
     .bg-ambient .orb { animation: none; }
   }
+  /* On mobile the desktop orb sizes (520/460/580) are larger than the
+     viewport itself, which made them feel like a wash instead of
+     ambient accents. Scale down + tighten offsets so they read
+     correctly at narrow widths. */
+  @media (max-width: 720px) {
+    .bg-ambient .orb { filter: blur(70px); }
+    .bg-ambient .orb-1 {
+      width: 280px;
+      height: 280px;
+      top: -90px;
+      left: -100px;
+    }
+    .bg-ambient .orb-2 {
+      width: 240px;
+      height: 240px;
+      right: -100px;
+    }
+    .bg-ambient .orb-3 {
+      width: 320px;
+      height: 320px;
+      left: 18%;
+    }
+  }
   /* CSS scroll-snap was too soft (proximity) or too hard (mandatory)
      on iOS Safari. The lock-on is JS-driven below — see
      setupStepsSnap in the script block. */
