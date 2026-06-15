@@ -335,6 +335,24 @@ section.contact {
 }
 .gal-row[data-cols="1"] .gal-cell { aspect-ratio: 16 / 9; }
 .gal-row[data-cols="3"] .gal-cell { aspect-ratio: 1 / 1; }
+/* Asymmetric rows: only the big cell defines the row height (via
+   its aspect-ratio). The small cell drops aspect-ratio and stretches
+   to fill — otherwise the small cell ends up shorter than the big
+   one, leaving an awkward white gap below it. */
+.gal-row[data-cols="2-asym"] .gal-cell:first-child {
+  aspect-ratio: 4 / 3;
+}
+.gal-row[data-cols="2-asym"] .gal-cell:last-child {
+  aspect-ratio: auto;
+  height: 100%;
+}
+.gal-row[data-cols="1-asym"] .gal-cell:last-child {
+  aspect-ratio: 4 / 3;
+}
+.gal-row[data-cols="1-asym"] .gal-cell:first-child {
+  aspect-ratio: auto;
+  height: 100%;
+}
 .gal-cell img {
   width: 100%;
   height: 100%;
