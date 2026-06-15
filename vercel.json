@@ -1,0 +1,19 @@
+{
+  "rewrites": [
+    {
+      "source": "/p/:slug",
+      "destination": "https://biljpbkwkeztjtrbynkf.supabase.co/functions/v1/site/:slug"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/p/:slug",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, stale-while-revalidate=3600"
+        }
+      ]
+    }
+  ]
+}
