@@ -54,10 +54,26 @@ img { display: block; max-width: 100%; }
   transition: transform 0.35s ease, background 0.35s ease, backdrop-filter 0.35s ease;
 }
 .nav.scrolled {
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--line);
+}
+/* Permanent darkened scrim behind the nav while over the hero so
+   the brand + links stay readable against bright photos like a
+   sun-lit Mediterranean exterior. Replaced by the white `.scrolled`
+   state once the user scrolls past the hero. */
+.nav.nav-permanent:not(.scrolled) {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.25) 70%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+.nav.nav-permanent:not(.scrolled) .nav-brand,
+.nav.nav-permanent:not(.scrolled) .nav-actions a {
+  color: #ffffff;
 }
 .nav.hidden { transform: translateY(-110%); }
 .nav-brand {
@@ -174,18 +190,19 @@ img { display: block; max-width: 100%; }
   opacity: 0.5;
 }
 .hero-title {
-  font-size: clamp(48px, 9vw, 120px);
-  line-height: 0.95;
+  font-size: clamp(44px, 7.5vw, 88px);
+  line-height: 0.98;
   letter-spacing: -0.025em;
   font-weight: 500;
   margin-bottom: 22px;
+  max-width: 14ch;
 }
 .hero-meta {
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px 26px;
-  font-size: 15px;
+  gap: 14px 22px;
+  font-size: 14px;
   letter-spacing: 0.04em;
   opacity: 0.92;
 }
@@ -194,9 +211,9 @@ img { display: block; max-width: 100%; }
   background: rgba(255,255,255,0.6);
 }
 .hero-price {
-  margin-top: 18px;
-  display: inline-block;
-  font-size: 28px;
+  margin-top: 22px;
+  display: block;
+  font-size: 26px;
   font-weight: 500;
   letter-spacing: -0.01em;
 }
