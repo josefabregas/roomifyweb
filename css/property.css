@@ -96,8 +96,10 @@ img { display: block; max-width: 100%; }
   display: inline-flex; gap: 22px; align-items: center;
 }
 .nav-actions a {
-  font-size: 13px;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
   color: var(--ink-soft);
   transition: color 0.15s ease;
 }
@@ -582,13 +584,29 @@ footer a {
 
 @media (max-width: 900px) {
   .nav { padding: 14px 18px; }
+  .nav-brand { font-size: 16px; }
   .nav-actions { gap: 12px; }
-  .nav-actions a { font-size: 12px; }
+  .nav-actions a { font-size: 10px; letter-spacing: 0.2em; }
   .nav-cta { padding: 8px 14px; }
   .hero { min-height: 540px; }
-  .hero-overlay { padding-bottom: 56px; }
-  .hero-content { padding: 0 22px; }
-  .hero-title { font-size: clamp(40px, 12vw, 60px); }
+  /* Lift the hero content off the bottom edge on mobile so the
+     title doesn't feel crammed against the photo, and shrink the
+     title so the price has comfortable room below it. */
+  .hero-overlay { padding-bottom: clamp(64px, 14vh, 120px); }
+  .hero-content {
+    padding: 0 22px;
+    max-width: 100%;
+  }
+  .hero-eyebrow { margin-bottom: 14px; font-size: 10px; letter-spacing: 0.32em; }
+  .hero-title {
+    font-size: clamp(32px, 9vw, 48px);
+    margin-bottom: 22px;
+    max-width: 100%;
+  }
+  .hero-price {
+    font-size: 18px;
+    padding-top: 14px;
+  }
   .hero-meta { font-size: 13px; gap: 10px 18px; }
   .stats { grid-template-columns: repeat(2, 1fr); }
   .stat { padding: 24px 12px; }
