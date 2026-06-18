@@ -350,7 +350,7 @@ section.contact {
 .gal-cell {
   position: relative;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 0;
   background: var(--bg-soft);
   aspect-ratio: 4 / 3;
 }
@@ -542,7 +542,7 @@ footer a {
   max-width: 92vw;
   max-height: 88vh;
   object-fit: contain;
-  border-radius: 4px;
+  border-radius: 0;
   box-shadow: 0 40px 100px rgba(0,0,0,0.6);
   cursor: zoom-out;
 }
@@ -628,6 +628,21 @@ footer a {
   .gal-row[data-cols="2-asym"],
   .gal-row[data-cols="1-asym"] {
     grid-template-columns: 1fr;
+  }
+  /* On mobile every row collapses to one column. Without overriding
+     the desktop aspect-ratio rules, 3-col cells end up as full-width
+     squares (too dominant) and asym cells stretch awkwardly. Force
+     every cell to a consistent landscape 3:2 — feels like real estate
+     photography on mobile rather than Instagram tiles. */
+  .gal-row .gal-cell,
+  .gal-row[data-cols="1"] .gal-cell,
+  .gal-row[data-cols="3"] .gal-cell,
+  .gal-row[data-cols="2-asym"] .gal-cell:first-child,
+  .gal-row[data-cols="2-asym"] .gal-cell:last-child,
+  .gal-row[data-cols="1-asym"] .gal-cell:first-child,
+  .gal-row[data-cols="1-asym"] .gal-cell:last-child {
+    aspect-ratio: 3 / 2;
+    height: auto;
   }
   .gal-row { gap: 14px; }
   .gallery-rows { gap: 14px; }
