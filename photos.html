@@ -9,7 +9,8 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- App is iOS-native: use the system stack matching Helvetica Neue
+       instead of a custom serif. Keeps web + iPhone visually identical. -->
   <style>
     :root {
       --bg: #0A0A0A;
@@ -101,10 +102,9 @@
       flex-wrap: wrap;
     }
     .page-title {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-weight: 500;
-      font-size: 48px;
-      letter-spacing: -0.015em;
+      font-weight: 700;
+      font-size: 40px;
+      letter-spacing: -0.02em;
       line-height: 1.05;
     }
     .page-sub {
@@ -141,11 +141,10 @@
       padding: 40px 32px;
     }
     .auth-title {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 34px;
-      font-weight: 500;
+      font-size: 26px;
+      font-weight: 600;
       margin-bottom: 8px;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.015em;
     }
     .auth-sub {
       font-size: 14px;
@@ -214,11 +213,11 @@
       color: var(--ink-muted);
     }
     .empty-title {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 28px;
-      font-weight: 500;
+      font-size: 22px;
+      font-weight: 600;
       color: var(--ink-soft);
       margin-bottom: 12px;
+      letter-spacing: -0.01em;
     }
 
     /* ─── Listing card (mirrors the iPhone app's listing card aesthetic) ─── */
@@ -273,12 +272,11 @@
     }
     .listing-info { min-width: 0; flex: 1; }
     .listing-name {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 28px;
-      font-weight: 500;
-      line-height: 1.15;
-      letter-spacing: -0.01em;
-      margin-bottom: 6px;
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      margin-bottom: 4px;
       color: var(--ink);
       overflow: hidden;
       text-overflow: ellipsis;
