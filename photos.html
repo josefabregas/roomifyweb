@@ -485,16 +485,27 @@
 
     let signedUrlCache = new Map();
 
-    async function signedUrl(path) {
-      if (!path) return null;
-      if (signedUrlCache.has(path)) return signedUrlCache.get(path);
-      const { data, error } = await supabase
-        .storage
-        .from('user-photos')
-        .createSignedUrl(path, 60 * 60 * 24 * 7);
-      if (error || !data?.signedUrl) return null;
-      signedUrlCache.set(path, data.signedUrl);
-      return data.signedUrl;
+    // The roomified JPEG already lives in the `enhanced` Supabase
+    // bucket from the original roomify call — we just need to sign
+    // a URL for it. The /photo-url Edge Function verifies the user
+    // owns the photo and signs against the existing path. No
+    // separate upload from the iPhone needed.
+    async function urlForJob(jobId, variant = 'main') {
+      if (!jobId) return null;
+      const cacheKey = `${jobId}:${variant}`;
+      if (signedUrlCache.has(cacheKey)) return signedUrlCache.get(cacheKey);
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess?.session?.access_token;
+      if (!token) return null;
+      const res = await fetch(
+        `${SUPABASE_URL}/functions/v1/photo-url?job_id=${encodeURIComponent(jobId)}&variant=${variant}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (!res.ok) return null;
+      const json = await res.json();
+      if (!json.url) return null;
+      signedUrlCache.set(cacheKey, json.url);
+      return json.url;
     }
 
     function setBusy(busy) {
@@ -548,39 +559,42 @@
 
       // Tally for the header summary
       let totalPhotos = 0;
-      let uploadedPhotos = 0;
+      let cloudReady = 0;
       for (const ph of photos) {
         totalPhotos += 1;
-        if (ph.cloud_enhanced_path || ph.cloud_staged_path || ph.cloud_original_path) {
-          uploadedPhotos += 1;
-        }
+        if (ph.extras?.enhanceJobId) cloudReady += 1;
       }
       $('#totalSummary').textContent =
-        `${projects.length} listing${projects.length === 1 ? '' : 's'} · ${uploadedPhotos}/${totalPhotos} photos uploaded`;
+        `${projects.length} listing${projects.length === 1 ? '' : 's'} · ${cloudReady}/${totalPhotos} photos in the cloud`;
 
       const listings = projects.map((p) => {
         const projPhotos = byProject.get(p.id) ?? [];
-        const withPaths = projPhotos.filter((ph) =>
-          ph.cloud_enhanced_path || ph.cloud_staged_path || ph.cloud_original_path
-        );
-        const heroPhotos = withPaths.slice(0, 4);
+        // Roomified photos live in the `enhanced` bucket — we just
+        // need their jobId (stored in extras.enhanceJobId by the
+        // iPhone app when each roomify started). Any photo without
+        // a jobId is either still being roomified or was created
+        // before jobId tracking landed.
+        const withJob = projPhotos.filter((ph) => ph.extras?.enhanceJobId);
+        const heroPhotos = withJob.slice(0, 4);
         const heroHtml = heroPhotos.length > 0
           ? `<div class="listing-hero" data-project="${p.id}">${heroPhotos.map((ph) => {
-              const path = ph.cloud_enhanced_path || ph.cloud_staged_path || ph.cloud_original_path;
-              return `<div class="hero-tile" data-path="${path}"><img loading="lazy" alt="" /></div>`;
+              const jobId = ph.extras.enhanceJobId;
+              const variant = ph.extras.stagedVariantPreferred ? 'staged' : 'main';
+              return `<div class="hero-tile" data-job="${jobId}" data-variant="${variant}"><img loading="lazy" alt="" /></div>`;
             }).join('')}</div>`
-          : `<div class="listing-hero empty-hero">Uploading photos · check back soon</div>`;
-        const allTiles = withPaths.length > heroPhotos.length
-          ? `<div class="listing-grid">${withPaths.map((ph) => {
-              const path = ph.cloud_enhanced_path || ph.cloud_staged_path || ph.cloud_original_path;
-              return `<div class="photo-tile" data-path="${path}"><img loading="lazy" alt="" /></div>`;
+          : `<div class="listing-hero empty-hero">Photos still uploading · check back soon</div>`;
+        const allTiles = withJob.length > heroPhotos.length
+          ? `<div class="listing-grid">${withJob.map((ph) => {
+              const jobId = ph.extras.enhanceJobId;
+              const variant = ph.extras.stagedVariantPreferred ? 'staged' : 'main';
+              return `<div class="photo-tile" data-job="${jobId}" data-variant="${variant}"><img loading="lazy" alt="" /></div>`;
             }).join('')}</div>`
           : '';
-        const pendingCount = projPhotos.length - withPaths.length;
+        const pendingCount = projPhotos.length - withJob.length;
         const pendingNote = pendingCount > 0
-          ? `<div class="pending-state"><strong>${pendingCount}</strong> photo${pendingCount === 1 ? '' : 's'} still uploading from the iPhone app · check back in a minute</div>`
+          ? `<div class="pending-state"><strong>${pendingCount}</strong> photo${pendingCount === 1 ? '' : 's'} not yet on the cloud · re-roomify in the iPhone app to back them up here</div>`
           : '';
-        const status = withPaths.length === projPhotos.length && projPhotos.length > 0 ? 'ready' : 'pending';
+        const status = withJob.length === projPhotos.length && projPhotos.length > 0 ? 'ready' : 'pending';
         return `
           <section class="listing">
             ${heroHtml}
@@ -601,13 +615,13 @@
 
       appBody.innerHTML = `<div class="listings">${listings}</div>`;
 
-      // Lazy-load signed URLs for hero strips + photo grids.
+      // Lazy-load signed URLs for hero strips + photo grids. Batches
+      // of 8 to keep the parallel /photo-url calls under control.
       const tiles = Array.from(document.querySelectorAll('.hero-tile, .photo-tile'));
-      for (let i = 0; i < tiles.length; i += 12) {
-        const batch = tiles.slice(i, i + 12);
+      for (let i = 0; i < tiles.length; i += 8) {
+        const batch = tiles.slice(i, i + 8);
         await Promise.all(batch.map(async (tile) => {
-          const path = tile.dataset.path;
-          const url = await signedUrl(path);
+          const url = await urlForJob(tile.dataset.job, tile.dataset.variant);
           if (url) {
             const img = tile.querySelector('img');
             img.src = url;
