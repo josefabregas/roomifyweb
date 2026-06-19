@@ -374,6 +374,12 @@
           ${statCard('Domain sales', usd0(r.domain_gross_cents), `${num(r.domain_count)} domains @ $19`)}
           ${statCard('Stripe balance', s.ok ? usd(s.availableCents) : '—', s.ok ? usd(s.pendingCents) + ' pending' : 'unavailable')}
         </div>
+        ${(r.sandbox_grant_count ?? 0) > 0 ? `
+        <div class="section-label">Sandbox / test (excluded from revenue)</div>
+        <div class="grid grid-2">
+          ${statCard('Sandbox purchases', usd0(r.sandbox_gross_cents), `${num(r.sandbox_grant_count)} test transactions`)}
+          ${statCard('Counts toward revenue?', 'No', 'TestFlight + sandbox never counted')}
+        </div>` : ''}
         <div class="section-label">Recent IAP purchases</div>
         <table class="tbl">
           <thead><tr><th>Date</th><th>Amount</th><th>Reason</th></tr></thead>
