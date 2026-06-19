@@ -13,13 +13,16 @@
   <style>
     :root {
       --bg: #0A0A0A;
-      --bg-soft: #161616;
-      --card: #1c1c1c;
+      --bg-soft: #141414;
+      --card: #1a1a1a;
+      --card-hover: #1f1f1f;
       --ink: #fafafa;
       --ink-soft: #c8c4c0;
       --ink-muted: #7a7470;
       --line: rgba(255, 255, 255, 0.08);
+      --line-strong: rgba(255, 255, 255, 0.14);
       --accent: #c8b078;
+      --success: #5ce0a6;
       --danger: #ef6464;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,54 +35,81 @@
       line-height: 1.55;
       min-height: 100vh;
     }
-    .serif { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; }
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
-    button { font-family: inherit; cursor: pointer; }
+    button { font-family: inherit; cursor: pointer; border: none; }
 
+    /* ─── NAV: matches marketing-site index.html — small logo + ROOMIFY wordmark ─── */
     .nav {
       position: sticky; top: 0; z-index: 50;
       padding: 18px 32px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 24px;
       background: rgba(10, 10, 10, 0.85);
       backdrop-filter: saturate(180%) blur(20px);
       -webkit-backdrop-filter: saturate(180%) blur(20px);
       border-bottom: 1px solid var(--line);
     }
-    .nav-brand {
-      display: inline-flex; align-items: baseline; gap: 10px;
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 20px; letter-spacing: 0.04em; font-weight: 500;
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      letter-spacing: 0.34em;
+      font-weight: 500;
+      color: var(--ink);
     }
-    .nav-brand-mark {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--accent);
-      display: inline-block;
-      margin-right: 6px;
-    }
+    .brand img { width: 22px; height: 22px; }
     .nav-meta {
-      font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase;
+      flex: 1;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
       color: var(--ink-muted);
     }
     .nav-signout {
       background: transparent;
-      border: 1px solid var(--line);
+      border: 1px solid var(--line-strong);
       color: var(--ink-soft);
-      padding: 8px 16px;
+      padding: 9px 18px;
       border-radius: 999px;
-      font-size: 12px;
-      letter-spacing: 0.12em;
+      font-size: 11px;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      transition: background 0.15s ease, color 0.15s ease;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     }
-    .nav-signout:hover { background: rgba(255,255,255,0.06); color: var(--ink); }
+    .nav-signout:hover { background: rgba(255,255,255,0.06); color: var(--ink); border-color: rgba(255,255,255,0.24); }
 
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 48px 32px 96px;
+      padding: 40px 32px 96px;
+    }
+
+    /* ─── Page-level intro ─── */
+    .page-intro {
+      padding: 24px 0 40px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .page-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 500;
+      font-size: 48px;
+      letter-spacing: -0.015em;
+      line-height: 1.05;
+    }
+    .page-sub {
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
     }
 
     /* ─── Sign-in ─── */
@@ -88,10 +118,24 @@
       margin: 80px auto;
       padding: 0 24px;
     }
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 36px;
+      color: var(--ink);
+    }
+    .auth-brand img { width: 22px; height: 22px; }
+    .auth-brand-text {
+      font-size: 13px;
+      letter-spacing: 0.34em;
+      font-weight: 500;
+    }
     .auth-card {
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 40px 32px;
     }
     .auth-title {
@@ -99,6 +143,7 @@
       font-size: 34px;
       font-weight: 500;
       margin-bottom: 8px;
+      letter-spacing: -0.01em;
     }
     .auth-sub {
       font-size: 14px;
@@ -119,31 +164,30 @@
     }
     .field input {
       width: 100%;
-      background: rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.03);
       border: 1px solid var(--line);
       color: var(--ink);
-      padding: 12px 14px;
-      border-radius: 10px;
+      padding: 14px 16px;
+      border-radius: 12px;
       font-family: inherit;
       font-size: 15px;
       outline: none;
-      transition: border-color 0.15s ease;
+      transition: border-color 0.15s ease, background 0.15s ease;
     }
-    .field input:focus { border-color: var(--accent); }
+    .field input:focus { border-color: var(--accent); background: rgba(255,255,255,0.05); }
     .btn-primary {
       width: 100%;
       background: var(--ink);
       color: var(--bg);
-      border: none;
-      padding: 14px;
-      border-radius: 10px;
+      padding: 15px;
+      border-radius: 12px;
       font-weight: 600;
       font-size: 15px;
       letter-spacing: 0.02em;
       margin-top: 8px;
-      transition: transform 0.1s ease, opacity 0.15s ease;
+      transition: opacity 0.15s ease;
     }
-    .btn-primary:active { transform: translateY(1px); }
+    .btn-primary:hover { opacity: 0.9; }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     .auth-error {
       color: var(--danger);
@@ -152,8 +196,8 @@
       text-align: center;
     }
     .auth-note {
-      margin-top: 22px;
-      padding-top: 18px;
+      margin-top: 24px;
+      padding-top: 22px;
       border-top: 1px solid var(--line);
       font-size: 12px;
       color: var(--ink-muted);
@@ -161,7 +205,7 @@
       line-height: 1.6;
     }
 
-    /* ─── App body ─── */
+    /* ─── Empty state ─── */
     .empty {
       text-align: center;
       padding: 96px 24px;
@@ -175,72 +219,124 @@
       margin-bottom: 12px;
     }
 
+    /* ─── Listing card (mirrors the iPhone app's listing card aesthetic) ─── */
     .listings {
       display: flex;
       flex-direction: column;
-      gap: 64px;
-      margin-top: 24px;
+      gap: 24px;
     }
     .listing {
-      border-top: 1px solid var(--line);
-      padding-top: 36px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: border-color 0.15s ease;
     }
-    .listing-head {
+    .listing:hover { border-color: var(--line-strong); }
+    .listing-hero {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      background: var(--bg-soft);
+      aspect-ratio: 16 / 5;
+      overflow: hidden;
+    }
+    .listing-hero .hero-tile {
+      background: var(--bg-soft);
+      overflow: hidden;
+      position: relative;
+    }
+    .listing-hero .hero-tile img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .listing-hero .hero-tile:hover img { transform: scale(1.04); }
+    .listing-hero.empty-hero {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 16 / 5;
+      color: var(--ink-muted);
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .listing-body {
+      padding: 22px 26px 24px;
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      gap: 16px;
-      margin-bottom: 24px;
+      align-items: center;
+      gap: 20px;
       flex-wrap: wrap;
     }
+    .listing-info { min-width: 0; flex: 1; }
     .listing-name {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 500;
-      line-height: 1.1;
+      line-height: 1.15;
       letter-spacing: -0.01em;
+      margin-bottom: 6px;
+      color: var(--ink);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .listing-address {
+      font-size: 14px;
+      color: var(--ink-soft);
     }
     .listing-meta {
-      font-size: 12px;
-      letter-spacing: 0.18em;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: var(--ink-muted);
+      color: var(--ink-soft);
+      white-space: nowrap;
     }
-    .photo-grid {
+    .listing-meta-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--success);
+      display: inline-block;
+    }
+    .listing-meta.pending .listing-meta-dot { background: var(--accent); }
+
+    /* Photo grid inside expanded listing */
+    .listing-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      padding: 0 4px 4px;
     }
     .photo-tile {
       position: relative;
-      aspect-ratio: 4 / 3;
+      aspect-ratio: 1 / 1;
       background: var(--bg-soft);
-      border-radius: 6px;
       overflow: hidden;
       cursor: zoom-in;
+      border-radius: 4px;
     }
     .photo-tile img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      width: 100%; height: 100%; object-fit: cover;
       transition: transform 0.4s ease;
     }
-    .photo-tile:hover img { transform: scale(1.03); }
-    .photo-badge {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      padding: 4px 8px;
-      font-size: 10px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      background: rgba(0,0,0,0.65);
-      color: #fff;
-      border-radius: 4px;
-      backdrop-filter: blur(6px);
+    .photo-tile:hover img { transform: scale(1.05); }
+    .pending-state {
+      padding: 32px 26px;
+      background: rgba(200, 176, 120, 0.06);
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--ink-soft);
+      text-align: center;
+      letter-spacing: 0.02em;
     }
-    .photo-badge.staged { background: rgba(200, 176, 120, 0.85); color: #0a0a0a; }
-    .photo-badge.enhanced { background: rgba(92, 224, 166, 0.85); color: #0a0a0a; }
+    .pending-state strong { color: var(--ink); font-weight: 600; }
 
     /* ─── Lightbox ─── */
     .lightbox {
@@ -276,8 +372,8 @@
       color: #fff;
       padding: 10px 24px;
       border-radius: 999px;
-      font-size: 13px;
-      letter-spacing: 0.12em;
+      font-size: 12px;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       cursor: pointer;
       transition: background 0.15s ease;
@@ -299,19 +395,27 @@
     }
 
     @media (max-width: 700px) {
-      .container { padding: 32px 16px 80px; }
-      .listing-name { font-size: 24px; }
-      .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .container { padding: 24px 14px 80px; }
+      .page-title { font-size: 36px; }
       .nav { padding: 14px 18px; }
+      .brand { font-size: 11px; letter-spacing: 0.28em; }
+      .brand img { width: 18px; height: 18px; }
+      .nav-meta { display: none; }
+      .listing-hero { grid-template-columns: repeat(3, 1fr); aspect-ratio: 16 / 6; }
+      .listing-hero .hero-tile:nth-child(4) { display: none; }
+      .listing-grid { grid-template-columns: repeat(3, 1fr); }
+      .listing-body { padding: 18px 20px 20px; gap: 14px; }
+      .listing-name { font-size: 24px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ─── nav, only shown when authed ─── -->
+  <!-- ─── nav (only when authed) ─── -->
   <nav class="nav" id="nav" style="display:none">
-    <a class="nav-brand" href="/">
-      <span class="nav-brand-mark"></span>Roomify
+    <a class="brand" href="/">
+      <img src="/assets/logo-white.png" alt="" />
+      <span>ROOMIFY</span>
     </a>
     <span class="nav-meta" id="navMeta"></span>
     <button class="nav-signout" id="signOutBtn">Sign out</button>
@@ -319,9 +423,13 @@
 
   <!-- ─── auth ─── -->
   <main id="authScreen" class="auth-wrap" style="display:none">
+    <div class="auth-brand">
+      <img src="/assets/logo-white.png" alt="" />
+      <span class="auth-brand-text">ROOMIFY</span>
+    </div>
     <div class="auth-card">
       <h1 class="auth-title">Sign in to view your photos</h1>
-      <p class="auth-sub">Same email and password you use in the Roomify iPhone app.</p>
+      <p class="auth-sub">Same email and password as the Roomify iPhone app.</p>
       <form id="signInForm">
         <div class="field">
           <label for="email">Email</label>
@@ -335,13 +443,17 @@
         <div class="auth-error" id="authError" style="display:none"></div>
       </form>
       <p class="auth-note">
-        This page only shows + downloads your photos. Edits, AI enhancement, and publishing live in the iPhone app.
+        View + download only. Edits, AI enhancement, and publishing live in the iPhone app.
       </p>
     </div>
   </main>
 
   <!-- ─── app ─── -->
   <main id="appScreen" class="container" style="display:none">
+    <header class="page-intro">
+      <h1 class="page-title">Your photos</h1>
+      <span class="page-sub" id="totalSummary"></span>
+    </header>
     <div id="appBody"></div>
   </main>
 
@@ -389,15 +501,10 @@
       signInBtn.disabled = busy;
       signInBtn.textContent = busy ? 'Signing in…' : 'Sign in';
     }
-
-    function showError(msg) {
-      errorEl.textContent = msg;
-      errorEl.style.display = 'block';
-    }
-
-    function clearError() {
-      errorEl.style.display = 'none';
-      errorEl.textContent = '';
+    function showError(msg) { errorEl.textContent = msg; errorEl.style.display = 'block'; }
+    function clearError() { errorEl.style.display = 'none'; errorEl.textContent = ''; }
+    function escapeHtml(s) {
+      return (s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     async function showApp(user) {
@@ -430,7 +537,6 @@
         return;
       }
 
-      // Group photos by project_id, sort by sort_order.
       const byProject = new Map();
       for (const ph of photos) {
         if (!byProject.has(ph.project_id)) byProject.set(ph.project_id, []);
@@ -440,55 +546,75 @@
         arr.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
       }
 
+      // Tally for the header summary
+      let totalPhotos = 0;
+      let uploadedPhotos = 0;
+      for (const ph of photos) {
+        totalPhotos += 1;
+        if (ph.cloud_enhanced_path || ph.cloud_staged_path || ph.cloud_original_path) {
+          uploadedPhotos += 1;
+        }
+      }
+      $('#totalSummary').textContent =
+        `${projects.length} listing${projects.length === 1 ? '' : 's'} · ${uploadedPhotos}/${totalPhotos} photos uploaded`;
+
       const listings = projects.map((p) => {
         const projPhotos = byProject.get(p.id) ?? [];
-        const tiles = projPhotos.map((ph) => {
-          // Prefer enhanced (roomified) version; fall back to staged
-          // (virtual staging), then the original. Most users want
-          // to see/download the roomified output.
-          const path = ph.cloud_enhanced_path || ph.cloud_staged_path || ph.cloud_original_path;
-          if (!path) return ''; // Photo exists but file isn't uploaded yet — skip.
-          const label = ph.cloud_enhanced_path ? 'roomified' : ph.cloud_staged_path ? 'staged' : 'original';
-          return `<div class="photo-tile" data-path="${path}">
-            <img loading="lazy" alt="" data-pending="1" />
-            <span class="photo-badge ${label}">${label}</span>
-          </div>`;
-        }).filter(Boolean).join('');
+        const withPaths = projPhotos.filter((ph) =>
+          ph.cloud_enhanced_path || ph.cloud_staged_path || ph.cloud_original_path
+        );
+        const heroPhotos = withPaths.slice(0, 4);
+        const heroHtml = heroPhotos.length > 0
+          ? `<div class="listing-hero" data-project="${p.id}">${heroPhotos.map((ph) => {
+              const path = ph.cloud_enhanced_path || ph.cloud_staged_path || ph.cloud_original_path;
+              return `<div class="hero-tile" data-path="${path}"><img loading="lazy" alt="" /></div>`;
+            }).join('')}</div>`
+          : `<div class="listing-hero empty-hero">Uploading photos · check back soon</div>`;
+        const allTiles = withPaths.length > heroPhotos.length
+          ? `<div class="listing-grid">${withPaths.map((ph) => {
+              const path = ph.cloud_enhanced_path || ph.cloud_staged_path || ph.cloud_original_path;
+              return `<div class="photo-tile" data-path="${path}"><img loading="lazy" alt="" /></div>`;
+            }).join('')}</div>`
+          : '';
+        const pendingCount = projPhotos.length - withPaths.length;
+        const pendingNote = pendingCount > 0
+          ? `<div class="pending-state"><strong>${pendingCount}</strong> photo${pendingCount === 1 ? '' : 's'} still uploading from the iPhone app · check back in a minute</div>`
+          : '';
+        const status = withPaths.length === projPhotos.length && projPhotos.length > 0 ? 'ready' : 'pending';
         return `
           <section class="listing">
-            <div class="listing-head">
-              <div>
+            ${heroHtml}
+            <div class="listing-body">
+              <div class="listing-info">
                 <div class="listing-name">${escapeHtml(p.name || 'Untitled listing')}</div>
-                <div style="font-size:14px;color:var(--ink-soft);margin-top:4px">${escapeHtml(p.address || '')}</div>
+                <div class="listing-address">${escapeHtml(p.address || '')}</div>
               </div>
-              <div class="listing-meta">${projPhotos.length} photo${projPhotos.length === 1 ? '' : 's'}</div>
+              <div class="listing-meta ${status === 'ready' ? '' : 'pending'}">
+                <span class="listing-meta-dot"></span>
+                ${withPaths.length} of ${projPhotos.length} photos
+              </div>
             </div>
-            ${tiles ? `<div class="photo-grid">${tiles}</div>` : '<div class="empty" style="padding:32px 0">No photos uploaded yet.</div>'}
+            ${allTiles}
+            ${pendingNote}
           </section>`;
       }).join('');
 
       appBody.innerHTML = `<div class="listings">${listings}</div>`;
 
-      // Lazy-load signed URLs for the tiles. Doing all-at-once would
-      // hammer the storage API; we batch ~12 at a time.
-      const pendingTiles = Array.from(document.querySelectorAll('.photo-tile'));
-      for (let i = 0; i < pendingTiles.length; i += 12) {
-        const batch = pendingTiles.slice(i, i + 12);
+      // Lazy-load signed URLs for hero strips + photo grids.
+      const tiles = Array.from(document.querySelectorAll('.hero-tile, .photo-tile'));
+      for (let i = 0; i < tiles.length; i += 12) {
+        const batch = tiles.slice(i, i + 12);
         await Promise.all(batch.map(async (tile) => {
           const path = tile.dataset.path;
           const url = await signedUrl(path);
           if (url) {
             const img = tile.querySelector('img');
             img.src = url;
-            img.removeAttribute('data-pending');
             tile.addEventListener('click', () => openLightbox(url));
           }
         }));
       }
-    }
-
-    function escapeHtml(s) {
-      return (s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     // ─── lightbox ─────────────────────────────────────────────
@@ -504,16 +630,11 @@
       document.body.style.overflow = '';
     }
     $('#lbClose').addEventListener('click', closeLightbox);
-    lb.addEventListener('click', (e) => {
-      if (e.target === lb) closeLightbox();
-    });
+    lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && lb.classList.contains('open')) closeLightbox();
     });
     $('#lbDownload').addEventListener('click', async () => {
-      // Force a download by fetching the signed URL as a blob and
-      // saving via a temp <a download>. `<a href=signed-url download>`
-      // alone won't trigger a download cross-origin without this.
       const url = lbImg.src;
       try {
         const blob = await (await fetch(url)).blob();
@@ -526,7 +647,7 @@
         a.remove();
         URL.revokeObjectURL(objUrl);
       } catch (e) {
-        alert('Download failed. Try right-click → Save image.');
+        alert('Download failed. Right-click → Save image.');
       }
     });
 
@@ -539,10 +660,7 @@
       const password = $('#password').value;
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       setBusy(false);
-      if (error) {
-        showError(error.message);
-        return;
-      }
+      if (error) { showError(error.message); return; }
       if (data?.user) await showApp(data.user);
     });
 
@@ -554,14 +672,10 @@
       signedUrlCache.clear();
     });
 
-    // On load, if there's a session already, skip the sign-in form.
     (async () => {
       const { data } = await supabase.auth.getSession();
-      if (data?.session?.user) {
-        await showApp(data.session.user);
-      } else {
-        authScreen.style.display = 'block';
-      }
+      if (data?.session?.user) await showApp(data.session.user);
+      else authScreen.style.display = 'block';
     })();
   </script>
 
