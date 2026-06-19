@@ -20,7 +20,6 @@
   ],
   "headers": [
     {
-      "comment": "Founder dashboard — needs to load the Supabase SDK from jsDelivr and talk to Supabase. Looser CSP than the property pages. Matches both the admin subdomain (any path) and /admin on the apex.",
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "admin.roomifyapp.ai" }],
       "headers": [
