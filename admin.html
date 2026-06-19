@@ -143,6 +143,22 @@
 </head>
 <body>
 
+  <!-- Watchdog: if the ES module below fails to load (CDN blocked,
+       network hiccup), neither screen ever un-hides and the user
+       just sees a black page. After 2.5s with nothing shown, reveal
+       the sign-in form so the page is never blank. The module clears
+       this flag the moment it boots. -->
+  <script>
+    window.__roomifyBooted = false;
+    setTimeout(function () {
+      if (window.__roomifyBooted) return;
+      var a = document.getElementById('authScreen');
+      var err = document.getElementById('bootError');
+      if (a) a.style.display = 'block';
+      if (err) err.style.display = 'block';
+    }, 2500);
+  </script>
+
   <!-- ─── auth gate ─── -->
   <main id="authScreen" class="auth-wrap" style="display:none">
     <div class="auth-brand">
@@ -164,6 +180,9 @@
         <button class="btn-primary" id="signInBtn" type="submit">Sign in</button>
         <div class="auth-error" id="authError" style="display:none"></div>
       </form>
+      <div class="auth-error" id="bootError" style="display:none; margin-top:18px;">
+        Couldn’t load the dashboard engine. Check your connection and refresh.
+      </div>
     </div>
   </main>
 
@@ -195,7 +214,12 @@
   </div>
 
   <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+    // jsDelivr's +esm build is faster + more reliable than esm.sh for
+    // production. The watchdog above covers the case where even this
+    // fails to load.
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/+esm';
+    window.__roomifyBooted = true;
+    document.getElementById('bootError').style.display = 'none';
     const SUPABASE_URL = 'https://biljpbkwkeztjtrbynkf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbGpwYmt3a2V6dGp0cmJ5bmtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1NzMxODcsImV4cCI6MjA5NTE0OTE4N30.Lf0P1w8iW2LLfwomQkNttsUSUqEvQ2Yt3l0BlaTMKKg';
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
