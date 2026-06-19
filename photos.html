@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg: #0A0A0A;
@@ -27,10 +27,12 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
+    /* Body font mirrors the iPhone app (Helvetica Neue) — falls
+       back to system sans on platforms that don't ship it. */
     body {
       background: var(--bg);
       color: var(--ink);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
       line-height: 1.55;
       min-height: 100vh;
