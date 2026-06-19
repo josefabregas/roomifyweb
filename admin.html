@@ -428,6 +428,11 @@
       const totalRev = iapNet + (r.domain_gross_cents ?? 0);
       const arppuCents = paying > 0 ? Math.round(totalRev / paying) : 0;   // avg revenue per paying customer
       const ltvCents = paying > 0 ? Math.round((p.ltgpCents ?? 0) / paying) : 0; // avg gross profit per paying customer
+      lastLtvCents = ltvCents;
+      const savedCac = (localStorage.getItem('roomify.cac') || '').replace(/"/g, '');
+      // Recompute the ratio once the HTML is in the DOM (innerHTML is
+      // assigned by render() after this function returns).
+      setTimeout(roomifyCac, 0);
       return `
         <div class="grid grid-3">
           ${statCard('Total users', num(u.total), 'all-time signups')}
@@ -439,12 +444,48 @@
           ${statCard('LTV / customer', paying > 0 ? usd0(ltvCents) : '—', 'avg gross profit per paying customer', 'success')}
           ${statCard('Avg revenue / customer', paying > 0 ? usd0(arppuCents) : '—', 'total revenue ÷ paying customers')}
         </div>
+        <div class="section-label">CAC check — are you spending less to get a customer than they're worth?</div>
+        <div class="stat" style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <label style="font-size:13px;color:var(--ink-soft)">Your cost to acquire a customer (CAC): $</label>
+            <input id="cacInput" type="number" min="0" step="1" inputmode="decimal"
+              style="width:110px;background:rgba(255,255,255,0.04);border:1px solid var(--line-strong);color:var(--ink);padding:8px 12px;border-radius:8px;font-size:15px;outline:none"
+              value="${savedCac}" oninput="roomifyCac()" placeholder="e.g. 40" />
+          </div>
+          <div id="cacResult" style="font-size:14px;color:var(--ink-muted)">Enter your ad-spend-per-customer to see your LTV : CAC ratio.</div>
+        </div>
         <div class="grid grid-2" style="margin-top:14px">
           ${statCard('New (7 days)', num(u.new_7d), '')}
           ${statCard('New (30 days)', num(u.new_30d), '')}
         </div>
-        <div class="est-note">Conversion: ${u.total ? Math.round((u.paying / u.total) * 100) : 0}% of users have paid at least once. LTV is profit-based — what each customer is worth after costs.</div>
+        <div class="est-note">Conversion: ${u.total ? Math.round((u.paying / u.total) * 100) : 0}% of users have paid at least once. The CAC check compares your cost-to-acquire against profit-based LTV — healthy SaaS runs LTV ≥ 3× CAC.</div>
       `;
+    }
+
+    // Live CAC ↔ LTV comparison. Reads the profit-based LTV stashed
+    // during render + the CAC the user types, shows the ratio with a
+    // plain-English verdict. CAC persists in localStorage.
+    let lastLtvCents = 0;
+    function roomifyCac() {
+      const input = document.getElementById('cacInput');
+      const out = document.getElementById('cacResult');
+      if (!input || !out) return;
+      const cac = parseFloat(input.value);
+      localStorage.setItem('roomify.cac', input.value || '');
+      if (!cac || cac <= 0) {
+        out.innerHTML = 'Enter your ad-spend-per-customer to see your LTV : CAC ratio.';
+        return;
+      }
+      if (lastLtvCents <= 0) {
+        out.innerHTML = `<span style="color:var(--ink-soft)">No paying customers yet — once you have sales, your LTV fills in and this turns into a live ratio.</span>`;
+        return;
+      }
+      const ltv = lastLtvCents / 100;
+      const ratio = ltv / cac;
+      let color = 'var(--success)', verdict = 'Healthy — well above the 3× line.';
+      if (ratio < 1) { color = 'var(--danger)'; verdict = 'Losing money — you pay more to get a customer than they’re worth. Cut CAC or raise price.'; }
+      else if (ratio < 3) { color = 'var(--warning)'; verdict = 'Workable but thin — aim for 3× to leave room for everything else.'; }
+      out.innerHTML = `<span style="color:${color};font-weight:600;font-size:18px">${ratio.toFixed(1)}× LTV : CAC</span><br><span style="color:var(--ink-muted)">$${ltv.toFixed(0)} LTV vs $${cac.toFixed(0)} CAC — ${verdict}</span>`;
     }
 
     function renderUsage() {
