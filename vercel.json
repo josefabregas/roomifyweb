@@ -13,12 +13,41 @@
     {
       "source": "/(.*)",
       "missing": [
-        { "type": "host", "value": "(^|\\.)roomifyapp\\.ai$" }
+        { "type": "host", "value": "^(.*\\.)?roomifyapp\\.ai$" }
       ],
       "destination": "https://biljpbkwkeztjtrbynkf.supabase.co/functions/v1/site"
     }
   ],
   "headers": [
+    {
+      "comment": "Founder dashboard — needs to load the Supabase SDK from jsDelivr and talk to Supabase. Looser CSP than the property pages. Matches both the admin subdomain (any path) and /admin on the apex.",
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "admin.roomifyapp.ai" }],
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; connect-src 'self' https:; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:;"
+        }
+      ]
+    },
+    {
+      "source": "/admin",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; connect-src 'self' https:; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:;"
+        }
+      ]
+    },
+    {
+      "source": "/admin.html",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; connect-src 'self' https:; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:;"
+        }
+      ]
+    },
     {
       "source": "/p/:slug",
       "headers": [
@@ -36,7 +65,7 @@
     {
       "source": "/(.*)",
       "missing": [
-        { "type": "host", "value": "(^|\\.)roomifyapp\\.ai$" }
+        { "type": "host", "value": "^(.*\\.)?roomifyapp\\.ai$" }
       ],
       "headers": [
         { "key": "Content-Type", "value": "text/html; charset=utf-8" },
