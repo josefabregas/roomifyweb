@@ -332,10 +332,16 @@
       const p = metrics.profit ?? {};
       const iapNet = (r.iap_gross_cents ?? 0) - (r.iap_refunded_cents ?? 0);
       const totalRev = iapNet + (r.domain_gross_cents ?? 0);
+      const paying = u.paying ?? 0;
+      // LTV = average gross profit per paying customer. The single
+      // number that tells you how much each customer is worth.
+      const ltvCents = paying > 0 ? Math.round((p.ltgpCents ?? 0) / paying) : 0;
+      const ltvSub = paying > 0 ? `across ${num(paying)} paying customer${paying === 1 ? '' : 's'}` : 'no paying customers yet';
       return `
-        <div class="grid grid-2">
-          ${statCard('Lifetime gross profit', usd0(p.ltgpCents), 'after Apple cut, OpenAI + domain costs', 'success')}
+        <div class="grid grid-3">
+          ${statCard('LTV / customer', paying > 0 ? usd0(ltvCents) : '—', ltvSub, 'success')}
           ${statCard('Lifetime revenue', usd0(totalRev), `${num(r.iap_grant_count)} unlocks + ${num(r.domain_count)} domains`)}
+          ${statCard('Lifetime gross profit', usd0(p.ltgpCents), 'after Apple, OpenAI + domains')}
         </div>
         <div class="grid grid-3" style="margin-top:14px">
           ${statCard('Total users', num(u.total), `${num(u.new_30d)} new in 30d`)}
@@ -416,18 +422,28 @@
     }
 
     function renderUsers() {
-      const u = metrics.db.users;
+      const u = metrics.db.users, r = metrics.db.revenue, p = metrics.profit ?? {};
+      const paying = u.paying ?? 0;
+      const iapNet = (r.iap_gross_cents ?? 0) - (r.iap_refunded_cents ?? 0);
+      const totalRev = iapNet + (r.domain_gross_cents ?? 0);
+      const arppuCents = paying > 0 ? Math.round(totalRev / paying) : 0;   // avg revenue per paying customer
+      const ltvCents = paying > 0 ? Math.round((p.ltgpCents ?? 0) / paying) : 0; // avg gross profit per paying customer
       return `
         <div class="grid grid-3">
           ${statCard('Total users', num(u.total), 'all-time signups')}
           ${statCard('Paying users', num(u.paying), 'made ≥1 purchase', 'success')}
           ${statCard('Active balance', num(u.with_balance), 'have unused ops')}
         </div>
+        <div class="section-label">Customer value</div>
+        <div class="grid grid-2">
+          ${statCard('LTV / customer', paying > 0 ? usd0(ltvCents) : '—', 'avg gross profit per paying customer', 'success')}
+          ${statCard('Avg revenue / customer', paying > 0 ? usd0(arppuCents) : '—', 'total revenue ÷ paying customers')}
+        </div>
         <div class="grid grid-2" style="margin-top:14px">
           ${statCard('New (7 days)', num(u.new_7d), '')}
           ${statCard('New (30 days)', num(u.new_30d), '')}
         </div>
-        <div class="est-note">Conversion: ${u.total ? Math.round((u.paying / u.total) * 100) : 0}% of users have paid at least once.</div>
+        <div class="est-note">Conversion: ${u.total ? Math.round((u.paying / u.total) * 100) : 0}% of users have paid at least once. LTV is profit-based — what each customer is worth after costs.</div>
       `;
     }
 
