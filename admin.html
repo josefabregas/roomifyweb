@@ -329,19 +329,24 @@
 
     function renderOverview() {
       const r = metrics.db.revenue, u = metrics.db.users, us = metrics.db.usage, ct = metrics.db.content;
+      const p = metrics.profit ?? {};
       const iapNet = (r.iap_gross_cents ?? 0) - (r.iap_refunded_cents ?? 0);
       const totalRev = iapNet + (r.domain_gross_cents ?? 0);
       return `
-        <div class="grid grid-3">
-          ${statCard('Total revenue', usd0(totalRev), `${num(r.iap_grant_count)} unlocks + ${num(r.domain_count)} domains`, 'success')}
+        <div class="grid grid-2">
+          ${statCard('Lifetime gross profit', usd0(p.ltgpCents), 'after Apple cut, OpenAI + domain costs', 'success')}
+          ${statCard('Lifetime revenue', usd0(totalRev), `${num(r.iap_grant_count)} unlocks + ${num(r.domain_count)} domains`)}
+        </div>
+        <div class="grid grid-3" style="margin-top:14px">
           ${statCard('Total users', num(u.total), `${num(u.new_30d)} new in 30d`)}
           ${statCard('Photos roomified', num(us.openai_calls), `${num(us.openai_calls_30d)} in 30d`, 'accent')}
+          ${statCard('Domains sold', num(r.domain_count), usd0(r.domain_gross_cents) + ' lifetime')}
         </div>
         <div class="section-label">This month</div>
         <div class="grid grid-3">
           ${statCard('IAP revenue (gross)', usd0(r.iap_gross_cents_30d), 'last 30 days')}
           ${statCard('Published websites', num(ct.published_websites), `${num(ct.published_30d)} in 30d`)}
-          ${statCard('Domains registered', num(r.domain_count), usd0(r.domain_gross_cents) + ' lifetime')}
+          ${statCard('New users (30d)', num(u.new_30d), `${num(u.new_7d)} in 7d`)}
         </div>
         <div class="section-label">Integrations</div>
         ${renderIntegrationRow()}
@@ -353,10 +358,11 @@
       const pill = (ok, txt) => `<span class="pill ${ok ? 'ok' : 'off'}"><span class="dot"></span>${txt}</span>`;
       return `<table class="tbl">
         <tr><td>Stripe (domain payments)</td><td style="text-align:right">${s.ok ? pill(true, 'Connected · ' + usd(s.availableCents) + ' available') : pill(false, 'Error: ' + (s.reason || 'unknown'))}</td></tr>
-        <tr><td>Vercel (custom domains)</td><td style="text-align:right">${v.ok ? pill(v.domainCount < 45, v.domainCount + ' / 50 domains') : pill(false, 'Error: ' + (v.reason || 'unknown'))}</td></tr>
+        <tr><td>Vercel (custom domains)</td><td style="text-align:right">${v.ok ? pill(v.domainCount < 45, (v.customerDomainCount ?? 0) + ' customer · ' + v.domainCount + '/50 total') : pill(false, 'Error: ' + (v.reason || 'unknown'))}</td></tr>
         <tr><td>Supabase (database)</td><td style="text-align:right">${pill(true, 'Connected')}</td></tr>
         <tr><td>OpenAI (roomify engine)</td><td style="text-align:right">${pill(true, '~' + usd0(metrics.openaiEstCents) + ' est. lifetime')}</td></tr>
       </table>
+      ${v.ok && (v.infraDomainCount ?? 0) > 0 ? `<div class="est-note">${v.infraDomainCount} of those are Roomify's own domains (marketing + admin); ${50 - v.domainCount} customer slots free.</div>` : ''}
       ${v.ok && v.domainCount >= 45 ? '<div class="est-note">⚠ Approaching Vercel Hobby 50-domain cap — upgrade to Pro soon.</div>' : ''}`;
     }
 
@@ -374,6 +380,7 @@
           ${statCard('Domain sales', usd0(r.domain_gross_cents), `${num(r.domain_count)} domains @ $19`)}
           ${statCard('Stripe balance', s.ok ? usd(s.availableCents) : '—', s.ok ? usd(s.pendingCents) + ' pending' : 'unavailable')}
         </div>
+        ${renderProfitBreakdown()}
         ${(r.sandbox_grant_count ?? 0) > 0 ? `
         <div class="section-label">Sandbox / test (excluded from revenue)</div>
         <div class="grid grid-2">
@@ -388,6 +395,23 @@
           </tbody>
         </table>
         <div class="est-note">Apple takes ~15–30% of IAP; figures above are gross (pre-Apple-cut). Domain sales run through Stripe.</div>
+      `;
+    }
+
+    function renderProfitBreakdown() {
+      const p = metrics.profit;
+      if (!p) return '';
+      const line = (label, val, neg) => `<tr><td>${label}</td><td class="mono" style="text-align:right;color:${neg ? 'var(--danger)' : 'var(--ink)'}">${neg ? '−' : ''}${usd(Math.abs(val))}</td></tr>`;
+      return `
+        <div class="section-label">Lifetime gross profit</div>
+        <table class="tbl">
+          ${line('IAP after Apple cut (' + Math.round(p.appleCutPct*100) + '%)', p.iapAfterAppleCents, false)}
+          ${line('− Apple commission', p.appleCutCents, true)}
+          ${line('Domain profit (retail − wholesale)', p.domainProfitCents, false)}
+          ${line('− OpenAI est. cost', p.openaiEstCents, true)}
+          <tr style="border-top:2px solid var(--line-strong)"><td style="font-weight:700;color:var(--ink)">Lifetime gross profit</td><td class="mono amt" style="text-align:right;font-weight:700">${usd(p.ltgpCents)}</td></tr>
+        </table>
+        <div class="est-note">Assumes Apple Small Business Program (15%). OpenAI cost is estimated; domain costs are exact (from registrar invoices).</div>
       `;
     }
 
@@ -428,8 +452,8 @@
       const doms = metrics.db.recent_domains || [];
       return `
         <div class="grid grid-2">
-          ${statCard('Registered domains', num(r.domain_count), usd0(r.domain_gross_cents) + ' in sales', 'success')}
-          ${statCard('Vercel domains', v.ok ? num(v.domainCount) + ' / 50' : '—', v.ok ? 'Hobby plan cap' : 'unavailable')}
+          ${statCard('Domains sold to customers', num(r.domain_count), usd0(r.domain_gross_cents) + ' in sales', 'success')}
+          ${statCard('Vercel slots used', v.ok ? num(v.domainCount) + ' / 50' : '—', v.ok ? `${num(v.infraDomainCount ?? 0)} infra · ${num(v.customerDomainCount ?? 0)} customer` : 'unavailable')}
         </div>
         <div class="section-label">Registered domains</div>
         <table class="tbl">
