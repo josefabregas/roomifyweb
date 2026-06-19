@@ -213,17 +213,43 @@
     </main>
   </div>
 
-  <script type="module">
-    // jsDelivr's +esm build is faster + more reliable than esm.sh for
-    // production. The watchdog above covers the case where even this
-    // fails to load.
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/+esm';
+  <script>
+    // No SDK / CDN import — the property-page CSP (script-src 'self')
+    // would block any external <script>, and that fight isn't worth
+    // it. We hit Supabase's REST + Auth endpoints directly with
+    // fetch(), which CSP's connect-src https: already permits. Zero
+    // external script dependencies → the dashboard loads under any
+    // policy.
     window.__roomifyBooted = true;
-    document.getElementById('bootError').style.display = 'none';
     const SUPABASE_URL = 'https://biljpbkwkeztjtrbynkf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbGpwYmt3a2V6dGp0cmJ5bmtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1NzMxODcsImV4cCI6MjA5NTE0OTE4N30.Lf0P1w8iW2LLfwomQkNttsUSUqEvQ2Yt3l0BlaTMKKg';
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const TOKEN_KEY = 'roomify.admin.token.v1';
     const $ = (s) => document.querySelector(s);
+
+    // ─── tiny Supabase auth/REST layer over fetch ───
+    async function authSignIn(email, password) {
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(j.error_description || j.msg || j.message || 'Sign-in failed');
+      localStorage.setItem(TOKEN_KEY, j.access_token);
+      return j;
+    }
+    function authToken() { return localStorage.getItem(TOKEN_KEY); }
+    function authSignOut() { localStorage.removeItem(TOKEN_KEY); }
+    async function authUserEmail() {
+      const token = authToken();
+      if (!token) return null;
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) { authSignOut(); return null; }
+      const j = await res.json().catch(() => ({}));
+      return j.email ?? null;
+    }
 
     let metrics = null;
     let activeSection = 'overview';
@@ -249,12 +275,11 @@
     function showAuthError(m) { $('#authError').textContent = m; $('#authError').style.display = 'block'; }
 
     async function loadMetrics() {
-      const { data: sess } = await supabase.auth.getSession();
-      const token = sess?.session?.access_token;
+      const token = authToken();
       if (!token) { showSignIn(); return; }
       $('#content').innerHTML = '<div class="loading">Loading metrics…</div>';
       const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-metrics`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`, apikey: SUPABASE_ANON_KEY },
       });
       if (res.status === 403) {
         $('#content').innerHTML = '<div class="loading">This account isn’t the admin. Sign out and use the founder account.</div>';
@@ -424,19 +449,24 @@
       e.preventDefault();
       $('#authError').style.display = 'none';
       setBusy(true);
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: $('#email').value.trim(), password: $('#password').value,
-      });
-      setBusy(false);
-      if (error) { showAuthError(error.message); return; }
-      if (data?.user) showDashboard(data.user.email);
+      try {
+        const session = await authSignIn($('#email').value.trim(), $('#password').value);
+        showDashboard(session.user?.email ?? $('#email').value.trim());
+      } catch (err) {
+        showAuthError(err.message || 'Sign-in failed');
+      } finally {
+        setBusy(false);
+      }
     });
-    $('#signOutBtn').addEventListener('click', async () => { await supabase.auth.signOut(); metrics = null; showSignIn(); });
+    $('#signOutBtn').addEventListener('click', () => { authSignOut(); metrics = null; showSignIn(); });
     $('#refreshBtn').addEventListener('click', loadMetrics);
 
+    // On load: if we have a stored token, verify it resolves to a
+    // user before showing the dashboard (the email gate is enforced
+    // server-side by admin-metrics anyway).
     (async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data?.session?.user) showDashboard(data.session.user.email);
+      const email = await authUserEmail();
+      if (email) showDashboard(email);
       else showSignIn();
     })();
   </script>
