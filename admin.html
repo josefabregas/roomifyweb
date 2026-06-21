@@ -327,6 +327,49 @@
       return `<div class="stat"><div class="stat-label">${label}</div><div class="stat-value ${cls}">${value}</div>${sub ? `<div class="stat-sub">${sub}</div>` : ''}</div>`;
     }
 
+    function escapeHtml(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    function lightColor(s) {
+      return s === 'green' ? '#5ce0a6' : s === 'yellow' ? 'var(--warning)' : 'var(--danger)';
+    }
+
+    // 🟢🟡🔴 system health — red means something broke and needs a fix.
+    function renderHealth() {
+      const h = metrics.health;
+      if (!h) return '';
+      const c = lightColor(h.overall);
+      const label = h.overall === 'green' ? 'All systems healthy'
+        : h.overall === 'yellow' ? 'Minor issues — worth a look'
+        : 'Something is broken — needs a fix';
+      const chips = (h.checks || []).map((ck) => `
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px">
+          <span style="width:9px;height:9px;border-radius:50%;background:${lightColor(ck.status)};flex-shrink:0"></span>
+          <div><div style="font-size:13px;color:var(--ink)">${escapeHtml(ck.label)}</div><div style="font-size:11px;color:var(--ink-muted)">${escapeHtml(ck.detail)}</div></div>
+        </div>`).join('');
+      return `
+        <div style="background:var(--card);border:1px solid var(--line);border-left:3px solid ${c};border-radius:14px;padding:18px 20px;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <span style="width:12px;height:12px;border-radius:50%;background:${c};box-shadow:0 0 10px ${c}"></span>
+            <span style="font-size:15px;font-weight:600;color:var(--ink)">${label}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px">${chips}</div>
+        </div>`;
+    }
+
+    // Claude daily briefing.
+    function renderDigest() {
+      const d = metrics.digest;
+      const body = d
+        ? `<div style="font-size:15px;line-height:1.65;color:var(--ink-soft);white-space:pre-wrap">${escapeHtml(d)}</div>`
+        : `<div style="font-size:13px;color:var(--ink-muted)">Set an <code style="color:var(--ink-soft)">ANTHROPIC_API_KEY</code> in Supabase secrets and your AI daily briefing shows up here.</div>`;
+      return `
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px">
+          <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px">✦ Daily briefing</div>
+          ${body}
+        </div>`;
+    }
+
     function renderOverview() {
       const r = metrics.db.revenue, u = metrics.db.users, us = metrics.db.usage, ct = metrics.db.content;
       const p = metrics.profit ?? {};
@@ -338,6 +381,8 @@
       const ltvCents = paying > 0 ? Math.round((p.ltgpCents ?? 0) / paying) : 0;
       const ltvSub = paying > 0 ? `across ${num(paying)} paying customer${paying === 1 ? '' : 's'}` : 'no paying customers yet';
       return `
+        ${renderHealth()}
+        ${renderDigest()}
         <div class="grid grid-3">
           ${statCard('LTV / customer', paying > 0 ? usd0(ltvCents) : '—', ltvSub, 'success')}
           ${statCard('Lifetime revenue', usd0(totalRev), `${num(r.iap_grant_count)} unlocks + ${num(r.domain_count)} domains`)}
