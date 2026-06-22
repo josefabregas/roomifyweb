@@ -11,11 +11,17 @@
       "destination": "/admin.html"
     },
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "^(www\\.)?roomifyapp\\.ai$" }],
+      "destination": "/home.html"
+    },
+    {
       "source": "/(.*)",
+      "has": [{ "type": "host", "value": "(?<dhost>.+)" }],
       "missing": [
         { "type": "host", "value": "^(.*\\.)?roomifyapp\\.ai$" }
       ],
-      "destination": "https://biljpbkwkeztjtrbynkf.supabase.co/functions/v1/site"
+      "destination": "https://biljpbkwkeztjtrbynkf.supabase.co/functions/v1/site?host=:dhost"
     }
   ],
   "headers": [
