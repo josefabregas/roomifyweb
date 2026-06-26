@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Reset password — Roomify</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon.png" />
+<style>
+  :root{--bg:#000;--card:#0c0c0c;--text:#fff;--muted:#a3a3a3;--border:rgba(255,255,255,0.1);--accent:#5CE0A6;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100%;}
+  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .card{width:100%;max-width:400px;text-align:center;}
+  .logo{width:40px;height:40px;margin:0 auto 10px;display:block;}
+  .brand{font-size:14px;font-weight:700;letter-spacing:4px;margin-bottom:30px;}
+  h1{font-size:26px;font-weight:700;letter-spacing:-0.02em;margin-bottom:8px;}
+  p.sub{color:var(--muted);font-size:15px;line-height:22px;margin-bottom:26px;}
+  input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;color:#fff;font-size:16px;padding:15px 16px;margin-bottom:12px;outline:none;}
+  input:focus{border-color:var(--accent);}
+  button{width:100%;background:var(--accent);color:#06281b;font-size:16px;font-weight:700;border:none;border-radius:12px;padding:15px;cursor:pointer;}
+  button:disabled{opacity:0.5;cursor:default;}
+  .msg{font-size:14px;margin-top:16px;line-height:20px;min-height:20px;}
+  .msg.err{color:#ff6b6b;}
+  .msg.ok{color:var(--accent);}
+  .hidden{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+  <img class="logo" src="/assets/logo-white.png" alt="Roomify" />
+  <div class="brand">ROOMIFY</div>
+  <h1>Set a new password</h1>
+  <p class="sub" id="sub">Verifying your reset link&hellip;</p>
+  <div id="form" class="hidden">
+    <input type="password" id="pw" placeholder="New password" autocomplete="new-password" />
+    <input type="password" id="pw2" placeholder="Confirm new password" autocomplete="new-password" />
+    <button id="btn">Update password</button>
+  </div>
+  <div class="msg" id="msg"></div>
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  var SUPABASE_URL = 'https://biljpbkwkeztjtrbynkf.supabase.co';
+  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbGpwYmt3a2V6dGp0cmJ5bmtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1NzMxODcsImV4cCI6MjA5NTE0OTE4N30.Lf0P1w8iW2LLfwomQkNttsUSUqEvQ2Yt3l0BlaTMKKg';
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, { auth: { detectSessionInUrl: true, persistSession: false } });
+
+  var sub = document.getElementById('sub');
+  var form = document.getElementById('form');
+  var msg = document.getElementById('msg');
+  var btn = document.getElementById('btn');
+  var recovered = false;
+
+  function ready() {
+    if (recovered) return;
+    recovered = true;
+    sub.textContent = 'Choose a new password for your Roomify account.';
+    form.classList.remove('hidden');
+  }
+  function fail(t) {
+    if (recovered) return;
+    sub.textContent = '';
+    msg.className = 'msg err';
+    msg.textContent = t || 'This reset link is invalid or has expired. Open Roomify and request a new one.';
+  }
+
+  sb.auth.onAuthStateChange(function (event, session) {
+    if (event === 'PASSWORD_RECOVERY' || session) ready();
+  });
+
+  (async function init() {
+    try {
+      var q = new URLSearchParams(window.location.search);
+      var tokenHash = q.get('token_hash');
+      var type = q.get('type');
+      if (tokenHash && type) {
+        var v = await sb.auth.verifyOtp({ type: type, token_hash: tokenHash });
+        if (!v.error) { ready(); return; }
+      }
+      var s1 = await sb.auth.getSession();
+      if (s1.data.session) { ready(); return; }
+      // Give detectSessionInUrl a beat to process a hash-based link.
+      setTimeout(async function () {
+        var s2 = await sb.auth.getSession();
+        if (s2.data.session) ready(); else fail();
+      }, 1800);
+    } catch (e) {
+      fail();
+    }
+  })();
+
+  btn.addEventListener('click', async function () {
+    var pw = document.getElementById('pw').value;
+    var pw2 = document.getElementById('pw2').value;
+    msg.className = 'msg'; msg.textContent = '';
+    if (pw.length < 6) { msg.className = 'msg err'; msg.textContent = 'Password must be at least 6 characters.'; return; }
+    if (pw !== pw2) { msg.className = 'msg err'; msg.textContent = "Passwords don't match."; return; }
+    btn.disabled = true; btn.textContent = 'Updating…';
+    var r = await sb.auth.updateUser({ password: pw });
+    if (r.error) { btn.disabled = false; btn.textContent = 'Update password'; msg.className = 'msg err'; msg.textContent = r.error.message; return; }
+    form.classList.add('hidden');
+    sub.textContent = '';
+    msg.className = 'msg ok';
+    msg.textContent = 'Password updated. Open the Roomify app and sign in with your new password.';
+  });
+</script>
+</body>
+</html>
