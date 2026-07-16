@@ -504,6 +504,16 @@
           ${statCard('New (30 days)', num(u.new_30d), '')}
         </div>
         <div class="est-note">Conversion: ${u.total ? Math.round((u.paying / u.total) * 100) : 0}% of users have paid at least once. The CAC check compares your cost-to-acquire against profit-based LTV — healthy SaaS runs LTV ≥ 3× CAC.</div>
+        <div class="section-label">Signups${(metrics.recentUsers || []).length ? ` (${(metrics.recentUsers || []).length})` : ''}</div>
+        <table class="tbl">
+          <thead><tr><th>Email</th><th>Signed up</th><th>Last active</th></tr></thead>
+          <tbody>
+            ${(metrics.recentUsers || []).length
+              ? metrics.recentUsers.map((usr) => `<tr><td class="mono" style="word-break:break-all">${(usr.email || '').replace(/</g, '&lt;')}</td><td>${dateStr(usr.created_at)}</td><td>${usr.last_sign_in_at ? dateStr(usr.last_sign_in_at) : '—'}</td></tr>`).join('')
+              : '<tr><td colspan="3" class="empty-row">No signups yet.</td></tr>'}
+          </tbody>
+        </table>
+        <div class="est-note">Emails come straight from Supabase Auth · newest first, up to 100.</div>
       `;
     }
 
