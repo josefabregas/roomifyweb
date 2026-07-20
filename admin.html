@@ -484,6 +484,10 @@
           ${statCard('Paying users', num(u.paying), 'made ≥1 purchase', 'success')}
           ${statCard('Active balance', num(u.with_balance), 'have unused ops')}
         </div>
+        <div class="grid grid-2" style="margin-top:14px">
+          ${statCard('Free listings claimed', num(metrics.freeListingsClaimed ?? 0), 'used their free first listing')}
+          ${statCard('Then paid', num(u.paying), 'went on to buy at least once', 'success')}
+        </div>
         <div class="section-label">Customer value</div>
         <div class="grid grid-2">
           ${statCard('LTV / customer', paying > 0 ? usd0(ltvCents) : '—', 'avg gross profit per paying customer', 'success')}
